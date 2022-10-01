@@ -3,17 +3,26 @@ package gnorizon.SpringTestReportsBot.service.IOmethods;
 import java.io.File;
 
 public class IOEngine {
+    public static void createReport(long chatID,String typeReport){
+        IOCell ioCell;
+        if(typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+        }else{
+            ioCell = new IOCell("PatternInterReport.xlsx");
+        }
+        ioCell.setCell1(1, 1, 0,chatID);
+    }
 //для 1 случая в боте
     public static void setCell1F(String nameReport,String release, String readiness, long chatID) {
         IOCell ioCell= new IOCell("PatternFinalReport.xlsx");
-        ioCell.setCell1(1, 1, nameReport,chatID);
+        ioCell.setCell(1, 1, nameReport,chatID);
         ioCell.setCell(2, 1, release,chatID);
         ioCell.setCell(3,1,readiness,chatID);
     }
 
     public static void setCell1I(String nameReport,String release, String readiness,long chatID) {
         IOCell ioCell= new IOCell("PatternInterReport.xlsx");
-        ioCell.setCell1(1, 1, nameReport,chatID);
+        ioCell.setCell(1, 1, nameReport,chatID);
         ioCell.setCell(2, 1, release,chatID);
         ioCell.setCell(2,2,readiness,chatID);
     }

@@ -40,6 +40,8 @@ public class TelegramBot extends TelegramLongPollingBot{
     static final String INTERMEDIATE = "INT_REPORT_BUTTON" ;
     static final String FINAL = "FIN_REPORT_BUTTON";
     static final String ERROR_TEXT="Error occurred: ";
+    static final String FINISH_TYPE = "Finish";
+    static final String INTER_TYPE = "Intermediate";
 
     //передаем конфиг в бот
     public TelegramBot(BotConfig config){
@@ -81,12 +83,12 @@ public class TelegramBot extends TelegramLongPollingBot{
             switch (nameRep){
                 case 1:
                     // заполнение отчета
-                    writeInReport(messageText,chatId,"Intermediate");
+                    writeInReport(messageText,chatId,INTER_TYPE);
                     log.info("writeInReport to user "+ chatId);
                     break;
                 case 2:
                     // заполнение отчета
-                    writeInReport(messageText,chatId,"Finish");
+                    writeInReport(messageText,chatId,FINISH_TYPE);
                     log.info("writeInReport to user "+ chatId);
                     break;
             }
@@ -133,9 +135,11 @@ public class TelegramBot extends TelegramLongPollingBot{
 
             switch (callBackData){
                 case(INTERMEDIATE):
+                    IOEngine.createReport(chatId,INTER_TYPE);
                     executeEditMessageText(1,"Вы, выбрали промежуточный Отчет о тестировании",chatId,messageId);
                     break;
                 case(FINAL):
+                    IOEngine.createReport(chatId,FINISH_TYPE);
                     executeEditMessageText(2,"Вы, выбрали финальный Отчет о тестировании",chatId,messageId);
                     break;
 
@@ -179,7 +183,7 @@ public class TelegramBot extends TelegramLongPollingBot{
         log.info("Replied to user "+ firstName);
         sendMessagesAndButton(chatId,answer);
     }
-
+    // отправка сообщения
     private void sendMessages(long chatId, String textToSend){
 
         SendMessage sendMessage = new SendMessage();
@@ -188,6 +192,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
         executeMessage(sendMessage);
     }
+    //отправка сообщения с кнопками-клавиатурой
     private void sendMessagesAndButton(long chatId, String textToSend){
 
         SendMessage sendMessage = new SendMessage();
@@ -221,7 +226,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     String nameReport = message.substring(1,message.indexOf("-"));
                     String release = message.substring(message.indexOf("-")+1,message.lastIndexOf("-"));
                     String readiness = message.substring(message.lastIndexOf('-')+1);
-                    if (typeReport.equals("Finish")) {
+                    if (typeReport.equals(FINISH_TYPE)) {
                         IOEngine.setCell1F(nameReport,release,readiness,chatId);
                         sendMessages(chatId, "2.Введите дату начала и окончания \n\nначиная с '2' \nн: 2 01.01.2001/02.02.2002");
                     } else {
@@ -230,7 +235,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     }
                     break;
                 case ('2'):
-                    if (typeReport.equals("Finish")) {
+                    if (typeReport.equals(FINISH_TYPE)) {
                         String startDate = message.substring(1,message.indexOf("/"));
                         String finishDate =message.substring(message.indexOf("/")+1);
                         IOEngine.setCell2F(startDate,finishDate,chatId);
@@ -245,7 +250,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     }
                     break;
                 case ('3'):
-                    if (typeReport.equals("Finish")) {
+                    if (typeReport.equals(FINISH_TYPE)) {
                         String nameStand = message.substring(1);
                         IOEngine.setCell3F(nameStand,chatId);
                         sendMessages(chatId, "4.Введите операционные системы через запятую \n\nначиная с '4'");
@@ -257,7 +262,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     break;
                 case ('4'):
                     String[] arrayOS =message.substring(1).split(",");
-                    if (typeReport.equals("Finish")) {
+                    if (typeReport.equals(FINISH_TYPE)) {
                         IOEngine.setCell4F(arrayOS,chatId);
                         sendMessages(chatId, "5.Введите функции и количество багов в них через запятую  \n\nначиная с '5' \nн: 5 функция-1,функция-2");
                     } else {
