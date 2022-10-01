@@ -113,14 +113,8 @@ public class IOEngine {
     }
     //для 5 случая в боте
     public static void setCell5(String typeReport, String arrayFuncs[],long chatID) {
-
-        IOCell ioCell;
-        if(typeReport.equals("Finish")) {
-            ioCell = new IOCell("PatternFinalReport.xlsx");
-        }else{
-            ioCell = new IOCell("PatternInterReport.xlsx");
-        }
         int x;
+        IOCell ioCell = validation(typeReport);
 
         if(arrayFuncs.length<6){
             x =arrayFuncs.length;
@@ -169,11 +163,7 @@ public class IOEngine {
     //для 7 случая в боте
     public static void setCell7(String typeReport, String arrayBugP[],long chatID) {
         int x;
-        IOCell ioCell;
-        if (typeReport.equals("Finish")) {
-            ioCell = new IOCell("PatternFinalReport.xlsx");
-        }else{
-            ioCell = new IOCell("PatternInterReport.xlsx");}
+        IOCell ioCell = validation(typeReport);
 
         if(arrayBugP.length<3){
             x =arrayBugP.length;
@@ -199,11 +189,7 @@ public class IOEngine {
     }
     public static void setCell8(String typeReport, String arrayBugS[],long chatID) {
         int x;
-        IOCell ioCell;
-        if (typeReport.equals("Finish")) {
-            ioCell = new IOCell("PatternFinalReport.xlsx");
-        }else{
-            ioCell = new IOCell("PatternInterReport.xlsx");}
+        IOCell ioCell = validation(typeReport);
 
         if(arrayBugS.length<5){
             x =arrayBugS.length;
@@ -231,11 +217,7 @@ public class IOEngine {
     public static void setCell9(String typeReport, String arrayModules[],long chatID) {
 
         int x;
-        IOCell ioCell;
-        if (typeReport.equals("Finish")) {
-            ioCell = new IOCell("PatternFinalReport.xlsx");
-        }else{
-            ioCell = new IOCell("PatternInterReport.xlsx");}
+        IOCell ioCell = validation(typeReport);
 
         if(arrayModules.length<6){
             x =arrayModules.length;
@@ -261,15 +243,10 @@ public class IOEngine {
         }
     }
     public static void setCell0(String typeReport, String note,long chatID) {
-        IOCell ioCell;
+        IOCell ioCell = validation(typeReport);
         if (note.charAt(0)==' '){
             note = note.substring(1);
         }
-        if (typeReport.equals("Finish")) {
-            ioCell = new IOCell("PatternFinalReport.xlsx");
-        }else{
-            ioCell = new IOCell("PatternInterReport.xlsx");}
-
         ioCell.setCell(37, 0,note,chatID);
     }
 
@@ -311,6 +288,17 @@ public class IOEngine {
     public static void delete(String filePath){
         File file = new File(filePath);
         file.delete();
+    }
+    //проверка типа отчета
+    private static IOCell validation (String typeReport){
+
+        IOCell ioCell;
+        if (typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+        }else{
+            ioCell = new IOCell("PatternInterReport.xlsx");
+        }
+        return ioCell;
     }
 
 }
