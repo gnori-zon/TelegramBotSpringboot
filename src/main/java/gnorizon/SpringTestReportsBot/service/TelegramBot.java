@@ -29,13 +29,13 @@ import java.util.List;
 public class TelegramBot extends TelegramLongPollingBot{
 
     final BotConfig config;
-    static final String HELP_TEXT = "This bot generates a test report from the data you entered and sends it to you in Excel spreadsheet format\n\n" +
-            "You can execute commands from the main menu on the left or by typing command\n\n" +
-            " - type /start to see welcome massages\n"+
-            " - type /newreprot to create a new test report\n"+
-            " - type /send to bot sends a report\n" +
-            " - type /help to get info how to use bot\n\n"
-            + "GOOD LUCK";
+    static final String HELP_TEXT = "Этот бот формирует тест отчет из введенных вами данных и отправляет его вам в формате электронной табоицы Excel (.xlsx)\n\n" +
+            "Вы можете использовать команды из главного меню в левом нижнем углу или ввести эту команду\n\n" +
+            " - используйте /start для запуска бота\n"+
+            " - используйте /newreprot для создания нового отчета\n"+
+            " - используйте /send для отправки отчета\n" +
+            " - используйте /help для получения информации о использовании бота\n\n"
+            + "Удачи!";
 
     static final String INTERMEDIATE = "INT_REPORT_BUTTON" ;
     static final String FINAL = "FIN_REPORT_BUTTON";
@@ -133,10 +133,10 @@ public class TelegramBot extends TelegramLongPollingBot{
 
             switch (callBackData){
                 case(INTERMEDIATE):
-                    executeEditMessageText(1,"You, selected intermediate test report",chatId,messageId);
+                    executeEditMessageText(1,"Вы, выбрали промежуточный Отчет о тестировании",chatId,messageId);
                     break;
                 case(FINAL):
-                    executeEditMessageText(2,"You, selected final test report",chatId,messageId);
+                    executeEditMessageText(2,"Вы, выбрали финальный Отчет о тестировании",chatId,messageId);
                     break;
 
             }
@@ -175,7 +175,7 @@ public class TelegramBot extends TelegramLongPollingBot{
     //создает и отправляет сообщение к /start
     private void startCommandReceived(long chatId, String firstName){
 
-        String answer = "Hi "+firstName+", nice to meet you!";
+        String answer = "Привет "+firstName+", давай создадим отчет!";
         log.info("Replied to user "+ firstName);
         sendMessagesAndButton(chatId,answer);
     }
@@ -300,7 +300,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     break;
             }
         } else {
-            sendMessages(chatId, "Sorry,command was not recognized");
+            sendMessages(chatId, "Извините, такой команды нет");
         }
     }
 
