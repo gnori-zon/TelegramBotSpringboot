@@ -164,7 +164,6 @@ public class TelegramBot extends TelegramLongPollingBot{
         var buttonFinal = new InlineKeyboardButton();
         buttonFinal.setText("Финальный");
         buttonFinal.setCallbackData(FINAL);
-
         rowInline.add(buttonIntermediate);
         rowInline.add(buttonFinal);
 
@@ -212,6 +211,7 @@ public class TelegramBot extends TelegramLongPollingBot{
 
         keyboardMarkup.setKeyboard(keyboardRows);
         keyboardMarkup.setResizeKeyboard(true);
+        keyboardMarkup.setOneTimeKeyboard(true);
 
         sendMessage.setReplyMarkup(keyboardMarkup);
 
