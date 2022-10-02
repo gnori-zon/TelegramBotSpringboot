@@ -234,6 +234,8 @@ public class IOEngine {
             String closeBug = arrayModules[i].substring(arrayModules[i].indexOf("/")+1,arrayModules[i].indexOf(")"));
 
             ioCell.setCell(29+i, 0,nameModule,chatID);
+            ioCell.setCell(8, 1+i,nameModule,chatID);
+            
             ioCell.setCell(29+i, 1, Integer.parseInt(String.valueOf(openBug)),chatID);
             ioCell.setCell(29+i, 2, Integer.parseInt(String.valueOf(closeBug)),chatID);
             if (typeReport.equals("Finish")) {
