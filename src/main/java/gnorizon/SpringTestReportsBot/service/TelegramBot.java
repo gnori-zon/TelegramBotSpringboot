@@ -145,7 +145,6 @@ public class TelegramBot extends TelegramLongPollingBot{
                     break;
 
             }
-
         }
 
     }
@@ -212,6 +211,7 @@ public class TelegramBot extends TelegramLongPollingBot{
         keyboardRows.add(row);
 
         keyboardMarkup.setKeyboard(keyboardRows);
+        keyboardMarkup.setResizeKeyboard(true);
 
         sendMessage.setReplyMarkup(keyboardMarkup);
 
