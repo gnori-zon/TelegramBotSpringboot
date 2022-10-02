@@ -229,10 +229,12 @@ public class TelegramBot extends TelegramLongPollingBot{
                     String readiness = message.substring(message.lastIndexOf('-')+1);
                     if (typeReport.equals(FINISH_TYPE)) {
                         IOEngine.setCell1F(nameReport,release,readiness,chatId);
-                        sendMessages(chatId, "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 \nн: *2 01.01.2001/02.02.2002*");
+                        sendMessages(chatId, "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 ");
+                        sendMessages(chatId,"н: *2 01.01.2001/02.02.2002*");
                     } else {
                         IOEngine.setCell1I(nameReport,release,readiness,chatId);
-                        sendMessages(chatId, "2.Введите *дату начала/окончания/количество оставшихся дней и стенд*  \n\nначиная с 2 \nн: *2 01.01.2001/02.02.2002/32-имя стенда*");
+                        sendMessages(chatId, "2.Введите *дату начала/окончания/количество оставшихся дней и стенд*  \n\nначиная с 2 ");
+                        sendMessages(chatId,"н: *2 01.01.2001/02.02.2002/32-имя стенда*");
                     }
                     break;
                 case ('2'):
@@ -247,7 +249,8 @@ public class TelegramBot extends TelegramLongPollingBot{
                         String countDay =message.substring(message.lastIndexOf('/')+1,message.indexOf("-"));
                         String nameStand = message.substring(message.indexOf("-")+1);
                         IOEngine.setCell2I(startDate,finishDate,countDay,nameStand,chatId);
-                        sendMessages(chatId, "3.Введите *браузеры-всего тест-кейсов/пройденных тест-кейсов - всего багов/закрых багов* через запятую \n\nначиная с 3\n н: *3 Chrome-12/6-13/2, Safari-15/2-14/2*");
+                        sendMessages(chatId, "3.Введите *браузеры-всего тест-кейсов/пройденных тест-кейсов - всего багов/закрых багов* через запятую \n\nначиная с 3");
+                        sendMessages(chatId," н: *3 Chrome-12/6-13/2, Safari-15/2-14/2*");
                     }
                     break;
                 case ('3'):
@@ -258,23 +261,25 @@ public class TelegramBot extends TelegramLongPollingBot{
                     } else {
                         String[] arrayBrowsers =message.substring(1).split(",");
                         IOEngine.setCell3I(arrayBrowsers,chatId);
-                        sendMessages(chatId, "4.Введите *операционные системы/всего тест-кейсов/пройденных тест-кейсов/всего багов/закрых багов* через запятую \n\nначиная с 4\nн: *4 Windows-12/6-13/2,MacOS-15/2-14/2*");
+                        sendMessages(chatId, "4.Введите *операционные системы/всего тест-кейсов/пройденных тест-кейсов/всего багов/закрых багов* через запятую \n\nначиная с 4");
+                        sendMessages(chatId,"н: *4 Windows-12/6-13/2,MacOS-15/2-14/2*");
                     }
                     break;
                 case ('4'):
                     String[] arrayOS =message.substring(1).split(",");
                     if (typeReport.equals(FINISH_TYPE)) {
                         IOEngine.setCell4F(arrayOS,chatId);
-                        sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 \nн: *5 функция-1,функция-2*");
                     } else {
                         IOEngine.setCell4I(arrayOS,chatId);
-                        sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 \nн: *5 функция-1,функция-2*");
                     }
+                    sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 ");
+                    sendMessages(chatId,"н: *5 функция-1,функция-2*");
                     break;
                 case ('5'):
                     String[] arrayFuncs =message.substring(1).split(",");
                     IOEngine.setCell5(typeReport,arrayFuncs,chatId);
-                    sendMessages(chatId, "6.Введите *количество всего багов/закрыто багов и всего улучшений/улучшено через* -  \n\nначиная с 6 \nн: *6 15/12-16/13*");
+                    sendMessages(chatId, "6.Введите *количество всего багов/закрыто багов и всего улучшений/улучшено через* -  \n\nначиная с 6");
+                    sendMessages(chatId,"н: *6 15/12-16/13*");
                     break;
                 case ('6'):
                     String countBug = message.substring(1,message.indexOf("/"));
@@ -282,17 +287,20 @@ public class TelegramBot extends TelegramLongPollingBot{
                     String countImprovement = message.substring(message.indexOf("-")+1,message.lastIndexOf("/"));
                     String countClosedImprovement = message.substring(message.lastIndexOf("/")+1);
                     IOEngine.setCell6(typeReport,countBug,countClosedBug,countImprovement,countClosedImprovement,chatId);
-                    sendMessages(chatId, "7.Введите *количество багов/закрыто багов по Приоритету (High,Medium,Low)* через запятую  \n\nначиная с 7 \nн: *7 18/12,16/13,15/2*");
+                    sendMessages(chatId, "7.Введите *количество багов/закрыто багов по Приоритету (High,Medium,Low)* через запятую  \n\nначиная с 7");
+                    sendMessages(chatId, "н: *7 18/12,16/13,15/2*");
                     break;
                 case ('7'):
                     String[] arrayBugP =message.substring(1).split(",");
                     IOEngine.setCell7(typeReport,arrayBugP,chatId);
-                    sendMessages(chatId, "8.Введите *количество багов/закрыто багов по Серьезности (Blocker,Critical,Major,Minor,Trivial)* через запятую  \n\nначиная с 8 \nн: *8 17/16,16/15,15/14,14/13,13/12*");
+                    sendMessages(chatId, "8.Введите *количество багов/закрыто багов по Серьезности (Blocker,Critical,Major,Minor,Trivial)* через запятую  \n\nначиная с 8");
+                    sendMessages(chatId,"н: *8 17/16,16/15,15/14,14/13,13/12*");
                     break;
                 case ('8'):
                     String[] arrayBugS =message.substring(1).split(",");
                     IOEngine.setCell8(typeReport,arrayBugS,chatId);
-                    sendMessages(chatId, "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 \nн: *9 Модуль1(11/6),Модуль2(15/1)*");
+                    sendMessages(chatId, "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 ");
+                    sendMessages(chatId,"н: *9 Модуль1(11/6),Модуль2(15/1)*");
                     break;
                 case ('9'):
                     String[] arrayModules =message.substring(1).split(",");
@@ -328,7 +336,8 @@ public class TelegramBot extends TelegramLongPollingBot{
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
         message.setMessageId((int) messageId);
-        sendMessages(chatId, "Введите *название отчета,релиз и готовность* через запятую \n\nначиная с 1\nн: *1 Имя-3-готов*");
+        sendMessages(chatId, "Введите *название отчета,релиз и готовность* через запятую \n\nначиная с 1");
+        sendMessages(chatId,"\nн: *1 Имя-3-готов*");
 
         try{
             execute(message);
