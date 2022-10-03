@@ -47,13 +47,8 @@ public class IOEngine {
     public static void setCell3I(String arrayBrowsers[],long chatID) {
 
         IOCell ioCell = new IOCell("PatternInterReport.xlsx");
-        int x;
-
-        if(arrayBrowsers.length<6){
-            x =arrayBrowsers.length;
-        }else{
-            x =6;
-        }
+        // количество элементов не должно превышат 6
+        int x = Math.min(arrayBrowsers.length, 6);
 
         for (int i = 0; i < x; i++){
             String nameBrowser =arrayBrowsers[i].substring(1,arrayBrowsers[i].indexOf("-"));
@@ -73,13 +68,8 @@ public class IOEngine {
     //для 4 случая в боте
     public static void setCell4F(String arrayOS[],long chatID) {
         IOCell ioCell = new IOCell("PatternFinalReport.xlsx");
-        int x;
-
-        if(arrayOS.length<9){
-            x =arrayOS.length;
-        }else{
-            x =9;
-        }
+        // количесво элементов не должно привышать 9
+        int x = Math.min(arrayOS.length, 9);
 
         for (int i = 0; i < x; i++){
             ioCell.setCell(6, 1+i , arrayOS[i],chatID);
@@ -89,13 +79,8 @@ public class IOEngine {
     public static void setCell4I(String arrayOS[],long chatID) {
 
         IOCell ioCell = new IOCell("PatternInterReport.xlsx");
-        int x;
-
-        if(arrayOS.length<5){
-            x =arrayOS.length;
-        }else{
-            x =5;
-        }
+        // количество элементов не должно превышать 5
+        int x = Math.min(arrayOS.length, 5);
 
         for (int i = 0; i < x; i++){
             String nameOS =arrayOS[i].substring(1,arrayOS[i].indexOf("-"));
@@ -115,12 +100,8 @@ public class IOEngine {
     public static void setCell5(String typeReport, String arrayFuncs[],long chatID) {
         int x;
         IOCell ioCell = validation(typeReport);
-
-        if(arrayFuncs.length<6){
-            x =arrayFuncs.length;
-        }else{
-            x =6;
-        }
+        // количество элементов не должно превышать 6
+        x = Math.min(arrayFuncs.length, 6);
 
         for (int i = 0; i < x; i++){
             if (arrayFuncs[i].charAt(0) == ' '){
@@ -164,12 +145,8 @@ public class IOEngine {
     public static void setCell7(String typeReport, String arrayBugP[],long chatID) {
         int x;
         IOCell ioCell = validation(typeReport);
-
-        if(arrayBugP.length<3){
-            x =arrayBugP.length;
-        }else{
-            x =3;
-        }
+        // количество жлементов не должно превышать 3
+        x = Math.min(arrayBugP.length, 3);
 
         for (int i = 0; i < x; i++){
             if (arrayBugP[i].charAt(0)==' '){
@@ -190,12 +167,8 @@ public class IOEngine {
     public static void setCell8(String typeReport, String arrayBugS[],long chatID) {
         int x;
         IOCell ioCell = validation(typeReport);
-
-        if(arrayBugS.length<5){
-            x =arrayBugS.length;
-        }else{
-            x =5;
-        }
+        // количество жлементов не должно превышать 5
+        x = Math.min(arrayBugS.length, 5);
 
         for (int i = 0; i < x; i++){
             if (arrayBugS[i].charAt(0)==' '){
@@ -214,16 +187,12 @@ public class IOEngine {
         }
     }
 
-    public static void setCell9(String typeReport, String arrayModules[],long chatID) {
+    public static void setCell9(String typeReport, String arrayModules[],long chatID){
 
         int x;
         IOCell ioCell = validation(typeReport);
-
-        if(arrayModules.length<6){
-            x =arrayModules.length;
-        }else{
-            x =6;
-        }
+        // количество элементов не должно превышать 6
+        x = Math.min(arrayModules.length, 6);
 
         for (int i = 0; i < x; i++){
             if (arrayModules[i].charAt(0)==' '){
