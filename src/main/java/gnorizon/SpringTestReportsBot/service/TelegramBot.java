@@ -6,10 +6,12 @@ import gnorizon.SpringTestReportsBot.service.IOmethods.IOEngine;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -44,6 +46,8 @@ public class TelegramBot extends TelegramLongPollingBot{
     static final String ERROR_TEXT="Error occurred: ";
     static final String FINISH_TYPE = "Finish";
     static final String INTER_TYPE = "Intermediate";
+
+
 
     //передаем конфиг в бот
     public TelegramBot(BotConfig config){
@@ -310,11 +314,12 @@ public class TelegramBot extends TelegramLongPollingBot{
                 case ('0'):
                     String note = message.substring(1);
                     IOEngine.setCell0(typeReport,note,chatId);
+                    sendPhoto(chatId,"","SuccessBot.jpg");
                     sendMessagesAndButton(chatId, "Готово!");
                     break;
             }
         } else {
-            sendMessages(chatId, "Извините, такой команды нет");
+            sendPhoto(chatId, "Извините, такого пункта в отчете нет!","ErrorBot.jpg");
         }
     }
 
@@ -328,6 +333,18 @@ public class TelegramBot extends TelegramLongPollingBot{
         log.info("sendDocument to user "+ chatId);
         execute(sendDocument);
         IOEngine.delete(filePath);
+        }
+
+        @SneakyThrows
+        public void sendPhoto(long chatId, String imageCaption, String imagePath){
+        File image = ResourceUtils.getFile(imagePath);
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setPhoto(new InputFile(image));
+        sendPhoto.setChatId(String.valueOf(chatId));
+        sendPhoto.setCaption(imageCaption);
+        sendPhoto.setProtectContent(true);
+        log.info("sendPhoto to user "+ chatId);
+        execute(sendPhoto);
         }
 // изменение сообщения при выборе типа отчета
     private void executeEditMessageText(int nameRep1,String text,long chatId,long messageId){
