@@ -190,6 +190,8 @@ public class IOEngine {
     public static void setCell9(String typeReport, String arrayModules[],long chatID){
 
         int x;
+        int sumOpenBug=0;
+        int sumCloseBug=0;
         IOCell ioCell = validation(typeReport);
         // количество элементов не должно превышать 6
         x = Math.min(arrayModules.length, 6);
@@ -202,14 +204,20 @@ public class IOEngine {
             String openBug = arrayModules[i].substring(arrayModules[i].indexOf("(")+1,arrayModules[i].indexOf("/"));
             String closeBug = arrayModules[i].substring(arrayModules[i].indexOf("/")+1,arrayModules[i].indexOf(")"));
 
+            sumOpenBug+=Integer.parseInt(String.valueOf(openBug));
+            sumCloseBug+=Integer.parseInt(String.valueOf(closeBug));
+
             ioCell.setCell(29+i, 0,nameModule,chatID);
             ioCell.setCell(8, 1+i,nameModule,chatID);
 
             ioCell.setCell(29+i, 1, Integer.parseInt(String.valueOf(openBug)),chatID);
             ioCell.setCell(29+i, 2, Integer.parseInt(String.valueOf(closeBug)),chatID);
+
             if (typeReport.equals("Finish")) {
                 ioCell.setCell(29+i, 3, Integer.parseInt(String.valueOf(openBug))-Integer.parseInt(String.valueOf(closeBug)),chatID);
             }
+            ioCell.setCell(35, 1, sumOpenBug,chatID);
+            ioCell.setCell(35, 2, sumCloseBug,chatID);
 
         }
     }
