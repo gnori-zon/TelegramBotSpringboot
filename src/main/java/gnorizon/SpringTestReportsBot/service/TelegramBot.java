@@ -85,8 +85,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             long chatId = update.getMessage().getChatId();
 
-            validation(messageText, chatId, "Извините, я не знаю такой команды",true);
-
 
             //проверка вида отчета и заполнение отчета в выбранные ранее тип
             switch (nameRep) {
@@ -131,6 +129,15 @@ public class TelegramBot extends TelegramLongPollingBot {
                         nameRep = 0;
                     } else {
                         sendMessages(chatId, "Отчет не заполнен");
+                    }
+                    break;
+                default:
+                    if(nameRep==0) {
+                        if (messageText.charAt(0) == '/') {
+                            sendPhoto(chatId, "Извините, я такой команды не знаю!", "ErrorBot.jpg");
+                        } else {
+                            sendMessages(chatId, "Вы забыли про '/' ");
+                        }
                     }
                     break;
             }
@@ -233,100 +240,141 @@ public class TelegramBot extends TelegramLongPollingBot {
         String num = "1234567890";
         //проверка на присутсвие номера шага
         if (!num.contains(String.valueOf(message.charAt(0)))) {
-            validation(message, chatId, "Кажется вы забыли указать шаг",false);
+            validation(message, chatId, "Кажется вы забыли указать номер шага");
         }
         // проверка на отсутсвие двухзначного числа
+        // try необходимо при неполном заполнении переменной
         if (!num.contains(String.valueOf(message.charAt(1)))) {
             switch (message.charAt(0)) {
                 case ('1'):
-                    String nameReport = message.substring(1, message.indexOf("-"));
-                    String release = message.substring(message.indexOf("-") + 1, message.lastIndexOf("-"));
-                    String readiness = message.substring(message.lastIndexOf('-') + 1);
-                    if (typeReport.equals(FINISH_TYPE)) {
-                        IOEngine.setCell1F(nameReport, release, readiness, chatId);
-                        sendMessages(chatId, "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 ");
-                        sendMessages(chatId, "н: *2 01.01.2001/02.02.2002*");
-                    } else {
-                        IOEngine.setCell1I(nameReport, release, readiness, chatId);
-                        sendMessages(chatId, "2.Введите *дату начала/окончания/количество оставшихся дней и стенд*  \n\nначиная с 2 ");
-                        sendMessages(chatId, "н: *2 01.01.2001/02.02.2002/32-имя стенда*");
-                    }
+                    try {
+                        String nameReport = message.substring(1, message.indexOf("-"));
+                        String release = message.substring(message.indexOf("-") + 1, message.lastIndexOf("-"));
+                        String readiness = message.substring(message.lastIndexOf('-') + 1);
+                        if (typeReport.equals(FINISH_TYPE)) {
+                            IOEngine.setCell1F(nameReport, release, readiness, chatId);
+                            sendMessages(chatId, "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 ");
+                            sendMessages(chatId, "н: *2 01.01.2001/02.02.2002*");
+                        } else {
+                            IOEngine.setCell1I(nameReport, release, readiness, chatId);
+                            sendMessages(chatId, "2.Введите *дату начала/окончания/количество оставшихся дней и стенд*  \n\nначиная с 2 ");
+                            sendMessages(chatId, "н: *2 01.01.2001/02.02.2002/32-имя стенда*");
+                        }
+                }catch (Exception e){
+                    sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                }
                     break;
                 case ('2'):
-                    if (typeReport.equals(FINISH_TYPE)) {
-                        String startDate = message.substring(1, message.indexOf("/"));
-                        String finishDate = message.substring(message.indexOf("/") + 1);
-                        IOEngine.setCell2F(startDate, finishDate, chatId);
-                        sendMessages(chatId, "3.Введите *имя стенд*  \n\nначиная с 3");
-                    } else {
-                        String startDate = message.substring(1, message.indexOf("/"));
-                        String finishDate = message.substring(message.indexOf("/") + 1, message.lastIndexOf('/'));
-                        String countDay = message.substring(message.lastIndexOf('/') + 1, message.indexOf("-"));
-                        String nameStand = message.substring(message.indexOf("-") + 1);
-                        IOEngine.setCell2I(startDate, finishDate, countDay, nameStand, chatId);
-                        sendMessages(chatId, "3.Введите *браузеры-всего тест-кейсов/пройденных тест-кейсов - всего багов/закрых багов* через запятую \n\nначиная с 3");
-                        sendMessages(chatId, " н: *3 Chrome-12/6-13/2, Safari-15/2-14/2*");
+                    try {
+                        if (typeReport.equals(FINISH_TYPE)) {
+                            String startDate = message.substring(1, message.indexOf("/"));
+                            String finishDate = message.substring(message.indexOf("/") + 1);
+                            IOEngine.setCell2F(startDate, finishDate, chatId);
+                            sendMessages(chatId, "3.Введите *имя стенд*  \n\nначиная с 3");
+                        } else {
+                            String startDate = message.substring(1, message.indexOf("/"));
+                            String finishDate = message.substring(message.indexOf("/") + 1, message.lastIndexOf('/'));
+                            String countDay = message.substring(message.lastIndexOf('/') + 1, message.indexOf("-"));
+                            String nameStand = message.substring(message.indexOf("-") + 1);
+                            IOEngine.setCell2I(startDate, finishDate, countDay, nameStand, chatId);
+                            sendMessages(chatId, "3.Введите *браузеры-всего тест-кейсов/пройденных тест-кейсов - всего багов/закрых багов* через запятую \n\nначиная с 3");
+                            sendMessages(chatId, " н: *3 Chrome-12/6-13/2, Safari-15/2-14/2*");
+                        }
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
                     }
                     break;
                 case ('3'):
-                    if (typeReport.equals(FINISH_TYPE)) {
-                        String nameStand = message.substring(1);
-                        IOEngine.setCell3F(nameStand, chatId);
-                        sendMessages(chatId, "4.Введите *операционные системы* через запятую \n\nначиная с 4");
-                    } else {
-                        String[] arrayBrowsers = message.substring(1).split(",");
-                        IOEngine.setCell3I(arrayBrowsers, chatId);
-                        sendMessages(chatId, "4.Введите *операционные системы/всего тест-кейсов/пройденных тест-кейсов/всего багов/закрых багов* через запятую \n\nначиная с 4");
-                        sendMessages(chatId, "н: *4 Windows-12/6-13/2,MacOS-15/2-14/2*");
+                    try {
+                        if (typeReport.equals(FINISH_TYPE)) {
+                            String nameStand = message.substring(1);
+                            IOEngine.setCell3F(nameStand, chatId);
+                            sendMessages(chatId, "4.Введите *операционные системы* через запятую \n\nначиная с 4");
+                        } else {
+                            String[] arrayBrowsers = message.substring(1).split(",");
+                            IOEngine.setCell3I(arrayBrowsers, chatId);
+                            sendMessages(chatId, "4.Введите *операционные системы/всего тест-кейсов/пройденных тест-кейсов/всего багов/закрых багов* через запятую \n\nначиная с 4");
+                            sendMessages(chatId, "н: *4 Windows-12/6-13/2,MacOS-15/2-14/2*");
+                        }
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
                     }
                     break;
                 case ('4'):
-                    String[] arrayOS = message.substring(1).split(",");
-                    if (typeReport.equals(FINISH_TYPE)) {
-                        IOEngine.setCell4F(arrayOS, chatId);
-                    } else {
-                        IOEngine.setCell4I(arrayOS, chatId);
+                    try {
+                        String[] arrayOS = message.substring(1).split(",");
+                        if (typeReport.equals(FINISH_TYPE)) {
+                            IOEngine.setCell4F(arrayOS, chatId);
+                        } else {
+                            IOEngine.setCell4I(arrayOS, chatId);
+                        }
+                        sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 ");
+                        sendMessages(chatId, "н: *5 функция-1,функция-2*");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
                     }
-                    sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 ");
-                    sendMessages(chatId, "н: *5 функция-1,функция-2*");
                     break;
                 case ('5'):
-                    String[] arrayFuncs = message.substring(1).split(",");
-                    IOEngine.setCell5(typeReport, arrayFuncs, chatId);
-                    sendMessages(chatId, "6.Введите *количество всего багов/закрыто багов и всего улучшений/улучшено через* -  \n\nначиная с 6");
-                    sendMessages(chatId, "н: *6 15/12-16/13*");
+                    try {
+                        String[] arrayFuncs = message.substring(1).split(",");
+                        IOEngine.setCell5(typeReport, arrayFuncs, chatId);
+                        sendMessages(chatId, "6.Введите *количество всего багов/закрыто багов и всего улучшений/улучшено через* -  \n\nначиная с 6");
+                        sendMessages(chatId, "н: *6 15/12-16/13*");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
                 case ('6'):
-                    String countBug = message.substring(1, message.indexOf("/"));
-                    String countClosedBug = message.substring(message.indexOf("/") + 1, message.indexOf("-"));
-                    String countImprovement = message.substring(message.indexOf("-") + 1, message.lastIndexOf("/"));
-                    String countClosedImprovement = message.substring(message.lastIndexOf("/") + 1);
-                    IOEngine.setCell6(typeReport, countBug, countClosedBug, countImprovement, countClosedImprovement, chatId);
-                    sendMessages(chatId, "7.Введите *количество багов/закрыто багов по Приоритету (High,Medium,Low)* через запятую  \n\nначиная с 7");
-                    sendMessages(chatId, "н: *7 18/12,16/13,15/2*");
+                    try {
+                        String countBug = message.substring(1, message.indexOf("/"));
+                        String countClosedBug = message.substring(message.indexOf("/") + 1, message.indexOf("-"));
+                        String countImprovement = message.substring(message.indexOf("-") + 1, message.lastIndexOf("/"));
+                        String countClosedImprovement = message.substring(message.lastIndexOf("/") + 1);
+                        IOEngine.setCell6(typeReport, countBug, countClosedBug, countImprovement, countClosedImprovement, chatId);
+                        sendMessages(chatId, "7.Введите *количество багов/закрыто багов по Приоритету (High,Medium,Low)* через запятую  \n\nначиная с 7");
+                        sendMessages(chatId, "н: *7 18/12,16/13,15/2*");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
                 case ('7'):
-                    String[] arrayBugP = message.substring(1).split(",");
-                    IOEngine.setCell7(typeReport, arrayBugP, chatId);
-                    sendMessages(chatId, "8.Введите *количество багов/закрыто багов по Серьезности (Blocker,Critical,Major,Minor,Trivial)* через запятую  \n\nначиная с 8");
-                    sendMessages(chatId, "н: *8 17/16,16/15,15/14,14/13,13/12*");
+                    try {
+                        String[] arrayBugP = message.substring(1).split(",");
+                        IOEngine.setCell7(typeReport, arrayBugP, chatId);
+                        sendMessages(chatId, "8.Введите *количество багов/закрыто багов по Серьезности (Blocker,Critical,Major,Minor,Trivial)* через запятую  \n\nначиная с 8");
+                        sendMessages(chatId, "н: *8 17/16,16/15,15/14,14/13,13/12*");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
                 case ('8'):
-                    String[] arrayBugS = message.substring(1).split(",");
-                    IOEngine.setCell8(typeReport, arrayBugS, chatId);
-                    sendMessages(chatId, "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 ");
-                    sendMessages(chatId, "н: *9 Модуль1(11/6),Модуль2(15/1)*");
+                    try {
+                        String[] arrayBugS = message.substring(1).split(",");
+                        IOEngine.setCell8(typeReport, arrayBugS, chatId);
+                        sendMessages(chatId, "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 ");
+                        sendMessages(chatId, "н: *9 Модуль1(11/6),Модуль2(15/1)*");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
                 case ('9'):
-                    String[] arrayModules = message.substring(1).split(",");
-                    IOEngine.setCell9(typeReport, arrayModules, chatId);
-                    sendMessages(chatId, "0.Введите *Примечание* \n\nначиная с 0 ");
+                    try{
+                        String[] arrayModules = message.substring(1).split(",");
+                        IOEngine.setCell9(typeReport, arrayModules, chatId);
+                        sendMessages(chatId, "0.Введите *Примечание* \n\nначиная с 0 ");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
                 case ('0'):
-                    String note = message.substring(1);
-                    IOEngine.setCell0(typeReport, note, chatId);
-                    sendPhoto(chatId, "", "SuccessBot.jpg");
-                    sendMessagesAndButton(chatId, "Готово!");
+                    try {
+                        String note = message.substring(1);
+                        IOEngine.setCell0(typeReport, note, chatId);
+                        sendPhoto(chatId, "", "SuccessBot.jpg");
+                        sendMessagesAndButton(chatId, "Готово!");
+                    }catch (Exception e){
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                    }
                     break;
             }
         } else {
@@ -393,14 +441,12 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void validation(String message, long chatId, String text,boolean forCcommands) {
+    private void validation(String message, long chatId, String text) {
         if (!message.equals("Help") && !message.equals("Send report") && !message.equals("New report") &&
                 !message.equals("/help") && !message.equals("/send") && !message.equals("/newreport") &&
                 !message.equals("/start")) {
-            if(forCcommands){
-                if(message.charAt(0)=='/') {
-                    sendPhoto(chatId, text, "ErrorBot.jpg");
-                }
+            if(message.charAt(0)=='/'){
+                sendMessages(chatId, "Извините, я такой команды не знаю!");
             }else {
                 sendMessages(chatId, text);
             }
