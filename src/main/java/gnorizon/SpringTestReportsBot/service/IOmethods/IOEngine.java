@@ -1,6 +1,12 @@
 package gnorizon.SpringTestReportsBot.service.IOmethods;
 
+import lombok.SneakyThrows;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class IOEngine {
     public static void createReport(long chatID,String typeReport){
@@ -13,6 +19,20 @@ public class IOEngine {
         ioCell.setCell1(1, 1, 0,chatID);
     }
 //для 1 случая в боте
+    public static void setCell1(String typeReport, String[] data, long chatID) {
+        IOCell ioCell;
+        if (typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+            ioCell.setCell(1, 1, data[0],chatID);
+            ioCell.setCell(2, 1, data[1],chatID);
+            ioCell.setCell(3,1,data[2],chatID);
+        }else {
+            ioCell = new IOCell("PatternInterReport.xlsx");
+            ioCell.setCell(1, 1, data[0],chatID);
+            ioCell.setCell(2, 1, data[1],chatID);
+            ioCell.setCell(2,2,data[2],chatID);
+        }
+    }
     public static void setCell1F(String nameReport,String release, String readiness, long chatID) {
         IOCell ioCell= new IOCell("PatternFinalReport.xlsx");
         ioCell.setCell(1, 1, nameReport,chatID);
@@ -27,75 +47,87 @@ public class IOEngine {
         ioCell.setCell(2,2,readiness,chatID);
     }
 //для 2 случая в боте
-    public static void setCell2F(String startDate,String finishDate,long chatID) {
-        IOCell ioCell= new IOCell("PatternFinalReport.xlsx");
-        ioCell.setCell(3, 3, startDate,chatID);
-        ioCell.setCell(3, 5, finishDate,chatID);
-    }
-    public static void setCell2I(String startDate,String finishDate, String countDay, String nameStand,long chatID) {
-        IOCell ioCell= new IOCell("PatternInterReport.xlsx");
-        ioCell.setCell(4, 1, startDate,chatID);
-        ioCell.setCell(5, 1, finishDate,chatID);
-        ioCell.setCell(6,1,Integer.parseInt(String.valueOf(countDay)),chatID);
-        ioCell.setCell(12,1,nameStand,chatID);
-    }
-    //для 3 случая в боте
-    public static void setCell3F(String nameStand, long chatID) {
-        IOCell ioCell= new IOCell("PatternFinalReport.xlsx");
-        ioCell.setCell(5, 1, nameStand,chatID);
-    }
-    public static void setCell3I(String arrayBrowsers[],long chatID) {
-
-        IOCell ioCell = new IOCell("PatternInterReport.xlsx");
-        // количество элементов не должно превышат 6
-        int x = Math.min(arrayBrowsers.length, 6);
-
-        for (int i = 0; i < x; i++){
-            String nameBrowser =arrayBrowsers[i].substring(1,arrayBrowsers[i].indexOf("-"));
-            String countBug = arrayBrowsers[i].substring(arrayBrowsers[i].indexOf("-")+1,arrayBrowsers[i].indexOf("/"));
-            String countClosedBug = arrayBrowsers[i].substring(arrayBrowsers[i].indexOf("/")+1,arrayBrowsers[i].lastIndexOf("-"));
-            String countImprovement = arrayBrowsers[i].substring(arrayBrowsers[i].lastIndexOf("-")+1,arrayBrowsers[i].lastIndexOf("/"));
-            String countClosedImprovement = arrayBrowsers[i].substring(arrayBrowsers[i].lastIndexOf("/")+1);
-
-            ioCell.setCell(21 + i, 0 , nameBrowser,chatID);
-            ioCell.setCell(21 + i, 1,Integer.parseInt(String.valueOf( countBug)),chatID);
-            ioCell.setCell(21 + i, 2,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
-            ioCell.setCell(21 + i, 3,Integer.parseInt(String.valueOf( countImprovement)),chatID);
-            ioCell.setCell(21 + i, 4,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
+    @SneakyThrows
+    public static void setCell2(String typeReport, String[] date, long chatID) {
+        IOCell ioCell;
+        date[0] = date[0].replaceAll(" ","");
+        validDate(date[0]);
+        validDate(date[1]);
+        if (typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+            ioCell.setCell(3, 3, date[0],chatID);
+            ioCell.setCell(3, 5, date[1],chatID);
+        }else{
+            ioCell= new IOCell("PatternInterReport.xlsx");
+            String[] dayAndStand = date[2].split("-");
+            ioCell.setCell(4, 1, date[0],chatID);
+            ioCell.setCell(5, 1, date[1],chatID);
+            ioCell.setCell(6,1,Integer.parseInt(String.valueOf(dayAndStand[0])),chatID);
+            ioCell.setCell(12,1,dayAndStand[1],chatID);
         }
+    }
 
+    //для 3 случая в боте
+    public static void setCell3(String typeReport, String message, long chatID) {
+        message = message.substring(1);
+        IOCell ioCell;
+        if (typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+            ioCell.setCell(5, 1, message,chatID);
+        }else{
+            String arrayBrowsers[] = message.split(",");
+            ioCell = new IOCell("PatternInterReport.xlsx");
+            // количество элементов не должно превышат 6
+            int x = Math.min(arrayBrowsers.length, 6);
+            for (int i = 0; i < x; i++){
+                String nameBrowser =arrayBrowsers[i].substring(1,arrayBrowsers[i].indexOf("-"));
+                String countBug = arrayBrowsers[i].substring(arrayBrowsers[i].indexOf("-")+1,arrayBrowsers[i].indexOf("/"));
+                String countClosedBug = arrayBrowsers[i].substring(arrayBrowsers[i].indexOf("/")+1,arrayBrowsers[i].lastIndexOf("-"));
+                String countImprovement = arrayBrowsers[i].substring(arrayBrowsers[i].lastIndexOf("-")+1,arrayBrowsers[i].lastIndexOf("/"));
+                String countClosedImprovement = arrayBrowsers[i].substring(arrayBrowsers[i].lastIndexOf("/")+1);
+
+                ioCell.setCell(21 + i, 0 , nameBrowser,chatID);
+                ioCell.setCell(21 + i, 1,Integer.parseInt(String.valueOf( countBug)),chatID);
+                ioCell.setCell(21 + i, 2,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
+                ioCell.setCell(21 + i, 3,Integer.parseInt(String.valueOf( countImprovement)),chatID);
+                ioCell.setCell(21 + i, 4,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
+            }
+
+        }
     }
     //для 4 случая в боте
-    public static void setCell4F(String arrayOS[],long chatID) {
-        IOCell ioCell = new IOCell("PatternFinalReport.xlsx");
-        // количесво элементов не должно привышать 9
-        int x = Math.min(arrayOS.length, 9);
+    public static void setCell4(String typeReport, String arrayOS[],long chatID) {
+        IOCell ioCell;
+        arrayOS[0] = arrayOS[0].replaceAll(" ","");
+        if (typeReport.equals("Finish")) {
+            ioCell = new IOCell("PatternFinalReport.xlsx");
+            // количесво элементов не должно привышать 9
+            int x = Math.min(arrayOS.length, 9);
 
-        for (int i = 0; i < x; i++){
-            ioCell.setCell(6, 1+i , arrayOS[i],chatID);
+            for (int i = 0; i < x; i++){
+                ioCell.setCell(6, 1+i , arrayOS[i],chatID);
+            }
+        } else {
+            ioCell = new IOCell("PatternInterReport.xlsx");
+            // количество элементов не должно превышать 5
+            int x = Math.min(arrayOS.length, 5);
+
+            for (int i = 0; i < x; i++){
+                String nameOS =arrayOS[i].substring(0,arrayOS[i].indexOf("-"));
+                String countBug = arrayOS[i].substring(arrayOS[i].indexOf("-")+1,arrayOS[i].indexOf("/"));
+                String countClosedBug = arrayOS[i].substring(arrayOS[i].indexOf("/")+1,arrayOS[i].lastIndexOf("-"));
+                String countImprovement = arrayOS[i].substring(arrayOS[i].lastIndexOf("-")+1,arrayOS[i].lastIndexOf("/"));
+                String countClosedImprovement = arrayOS[i].substring(arrayOS[i].lastIndexOf("/")+1);
+
+                ioCell.setCell(15 + i, 0 , nameOS,chatID);
+                ioCell.setCell(15 + i, 1,Integer.parseInt(String.valueOf( countBug)),chatID);
+                ioCell.setCell(15 + i, 2,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
+                ioCell.setCell(15 + i, 3,Integer.parseInt(String.valueOf( countImprovement)),chatID);
+                ioCell.setCell(15 + i, 4,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
+            }
         }
-
     }
-    public static void setCell4I(String arrayOS[],long chatID) {
 
-        IOCell ioCell = new IOCell("PatternInterReport.xlsx");
-        // количество элементов не должно превышать 5
-        int x = Math.min(arrayOS.length, 5);
-
-        for (int i = 0; i < x; i++){
-            String nameOS =arrayOS[i].substring(1,arrayOS[i].indexOf("-"));
-            String countBug = arrayOS[i].substring(arrayOS[i].indexOf("-")+1,arrayOS[i].indexOf("/"));
-            String countClosedBug = arrayOS[i].substring(arrayOS[i].indexOf("/")+1,arrayOS[i].lastIndexOf("-"));
-            String countImprovement = arrayOS[i].substring(arrayOS[i].lastIndexOf("-")+1,arrayOS[i].lastIndexOf("/"));
-            String countClosedImprovement = arrayOS[i].substring(arrayOS[i].lastIndexOf("/")+1);
-
-            ioCell.setCell(15 + i, 0 , nameOS,chatID);
-            ioCell.setCell(15 + i, 1,Integer.parseInt(String.valueOf( countBug)),chatID);
-            ioCell.setCell(15 + i, 2,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
-            ioCell.setCell(15 + i, 3,Integer.parseInt(String.valueOf( countImprovement)),chatID);
-            ioCell.setCell(15 + i, 4,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
-        }
-    }
     //для 5 случая в боте
     public static void setCell5(String typeReport, String arrayFuncs[],long chatID) {
         int x;
@@ -117,30 +149,29 @@ public class IOEngine {
         }
     }
     //для 6 случая в боте
-    public static void setCell6(String typeReport, String countBug,String countClosedBug,String countImprovement,String countClosedImprovement,long chatID) {
-
+    public static void setCell6(String typeReport, String[] contBugAndImprove, long chatID){
         IOCell ioCell;
-        if (countBug.charAt(0) == ' '){
-            countBug = countBug.substring(1);
-        }
+        contBugAndImprove[0] = contBugAndImprove[0].replaceAll(" ","");
+        String[] countBugs = contBugAndImprove[0].split("/");
+        String[] countImprovements = contBugAndImprove[1].split("/");
+
         if(typeReport.equals("Finish")) {
             ioCell = new IOCell("PatternFinalReport.xlsx");
-
-            ioCell.setCell(13, 1,Integer.parseInt(String.valueOf( countBug)),chatID);
-            ioCell.setCell(13, 2,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
-            ioCell.setCell(13, 3,Integer.parseInt(String.valueOf( countClosedBug))-Integer.parseInt(String.valueOf( countClosedBug)),chatID);
-            ioCell.setCell(14, 1,Integer.parseInt(String.valueOf( countImprovement)),chatID);
-            ioCell.setCell(14, 2,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
-            ioCell.setCell(14, 3,Integer.parseInt(String.valueOf( countImprovement))-Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
+            ioCell.setCell(13, 1,Integer.parseInt(String.valueOf(countBugs[0])),chatID);
+            ioCell.setCell(13, 2,Integer.parseInt(String.valueOf(countBugs[1])),chatID);
+            ioCell.setCell(13, 3,Integer.parseInt(String.valueOf(countBugs[0]))-Integer.parseInt(String.valueOf(countBugs[1])),chatID);
+            ioCell.setCell(14, 1,Integer.parseInt(String.valueOf(countImprovements[0])),chatID);
+            ioCell.setCell(14, 2,Integer.parseInt(String.valueOf(countImprovements[1])),chatID);
+            ioCell.setCell(14, 3,Integer.parseInt(String.valueOf(countImprovements[0]))-Integer.parseInt(String.valueOf( countImprovements[1])),chatID);
         }else{
             ioCell = new IOCell("PatternInterReport.xlsx");
-            ioCell.setCell(29, 4,Integer.parseInt(String.valueOf( countBug)),chatID);
-            ioCell.setCell(29, 5,Integer.parseInt(String.valueOf( countClosedBug)),chatID);
-            ioCell.setCell(30, 4,Integer.parseInt(String.valueOf( countImprovement)),chatID);
-            ioCell.setCell(30, 5,Integer.parseInt(String.valueOf( countClosedImprovement)),chatID);
+            ioCell.setCell(29, 4,Integer.parseInt(String.valueOf(countBugs[0])),chatID);
+            ioCell.setCell(29, 5,Integer.parseInt(String.valueOf(countBugs[1])),chatID);
+            ioCell.setCell(30, 4,Integer.parseInt(String.valueOf(countImprovements[0])),chatID);
+            ioCell.setCell(30, 5,Integer.parseInt(String.valueOf(countImprovements[1])),chatID);
         }
-
     }
+
     //для 7 случая в боте
     public static void setCell7(String typeReport, String arrayBugP[],long chatID) {
         int x;
@@ -278,6 +309,45 @@ public class IOEngine {
             ioCell = new IOCell("PatternInterReport.xlsx");
         }
         return ioCell;
+    }
+
+    private static Object validDate (String date) throws Exception {
+
+        Map<Integer,String> validDate = new HashMap<>();
+        validDate.put(1,"Jan");
+        validDate.put(2,"Feb");
+        validDate.put(3,"Mar");
+        validDate.put(4,"Apr");
+        validDate.put(5,"May");
+        validDate.put(6,"Jun");
+        validDate.put(7,"Jul");
+        validDate.put(8,"Aug");
+        validDate.put(9,"Sep");
+        validDate.put(10,"Oct");
+        validDate.put(11,"Nov");
+        validDate.put(12,"Dec");
+
+        String[] arrDate = new String[3];
+        arrDate = date.split("\\.");
+
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("dd.MM.yyyy");
+
+        if(Integer.parseInt(arrDate[1])>31 || Integer.parseInt(arrDate[1])< 1 ||
+                Integer.parseInt(arrDate[2])<2000 || Integer.parseInt(arrDate[2])>2100){
+            throw new Exception();
+        }
+        Date docDate;
+        try {
+            docDate = format.parse(date);
+            if (docDate.toString().contains(validDate.get(Integer.parseInt(arrDate[1])))) {
+                return docDate;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            throw new Exception();
+        }
     }
 
 }

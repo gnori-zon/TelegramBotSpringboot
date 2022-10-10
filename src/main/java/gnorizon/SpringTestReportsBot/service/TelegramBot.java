@@ -4,11 +4,14 @@ import com.vdurmont.emoji.EmojiParser;
 import gnorizon.SpringTestReportsBot.config.BotConfig;
 import gnorizon.SpringTestReportsBot.model.*;
 import gnorizon.SpringTestReportsBot.service.IOmethods.IOEngine;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
+
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -27,19 +30,15 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.File;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private GroupRepository groupRepository;
-
     final BotConfig config;
     static final String HELP_TEXT = "Этот бот формирует тест отчет из введенных вами данных и отправляет его вам в формате электронной табоицы Excel (.xlsx)\n\n" +
             "Вы можете использовать команды из главного меню в левом нижнем углу или ввести эту команду\n\n" +
@@ -49,6 +48,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             " *-* используйте /help для получения информации о использовании бота\n" +
             " *-* используйте /addme и *название группы* для добавления себя в группу\n" +
             " *-* используйте /newgroup и *название группы* для согдания группы\n" +
+            " *-* используйте /delme и *название группы* чтобы выйти из группы\n" +
+            " *-* используйте /delgroup и *название группы* для удаления всех участников из группы и, затем, удаления группы\n" +
             " *-* используйте /reqrep и *название группы* для отправки ее участникам сообщения \"Подготовьте отчет!\"\n" +
 
             "\nВ процессе заполнения отчета вы можете вернуться к любому шагу и изменить сообщение\n"
@@ -59,8 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     static final String ERROR_TEXT = "Error occurred: ";
     static final String FINISH_TYPE = "Finish";
     static final String INTER_TYPE = "Intermediate";
-
-
+    private int nameRep = 0;
     //передаем конфиг в бот
     public TelegramBot(BotConfig config) {
         this.config = config;
@@ -80,19 +80,14 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error("Error bot settings command list: " + e.getMessage());
         }
     }
-
     @Override
     public String getBotUsername() {
         return config.getBotName();
     }
-
     @Override
     public String getBotToken() {
         return config.getToken();
     }
-
-    int nameRep = 0;
-
     //проверка на изменения
     @SneakyThrows
     @Override
@@ -211,7 +206,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
-
     private void dropGroup(Message message){
         var chatId = message.getChatId();
         String nameGroup = getGroupName(message.getText(),9);
@@ -234,7 +228,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessages(chatId, "Такой группы нет");
         }
     }
-
     private void deleteFromGroup(Message message){
         int success = 0;
         var chatId = message.getChatId();
@@ -256,7 +249,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessages(chatId, "Вы не состоите в этой группе");
             }
 
-        }else {
+        } else {
             sendMessages(chatId, "Такой группы нет");
         }
 
@@ -281,7 +274,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessages(chatId, "Такой группы нет");
         }
     }
-
     private void createGroup(Message message) {
         var owner = message.getChatId();
         String nameGroup = getGroupName(message.getText(),9);
@@ -293,11 +285,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             groupRepository.save(group);
             sendMessages(owner, "Готово! \n Имя группы: "+ group.getNameGroup());
             log.info("group saved: " + group);
-        } else{
+        } else {
             sendMessages(owner, "Такая группа уже есть");
         }
     }
-
     private void addUserInGroup(Message message) {
         var chatId = message.getChatId();
         String nameGroup = getGroupName(message.getText(),6);
@@ -317,7 +308,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendMessages(chatId, "Вы уже есть в этой группе");
         }
     }
-
     //выбор вида отчета
     private void newReport(long chatId) {
         SendMessage message = new SendMessage();
@@ -344,14 +334,12 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         executeMessage(message);
     }
-
     //создает и отправляет сообщение к /start
     private void startCommandReceived(long chatId, String firstName) {
         String answer = EmojiParser.parseToUnicode("Привет " + firstName + ", давай создадим отчет!" + ":bar_chart:");
         log.info("Replied to user " + firstName);
         sendMessagesAndButton(chatId, answer);
     }
-
     // отправка сообщения
     private void sendMessages(long chatId, String textToSend) {
 
@@ -362,7 +350,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         executeMessage(sendMessage);
     }
-
     //отправка сообщения с кнопками-клавиатурой
     private void sendMessagesAndButton(long chatId, String textToSend) {
 
@@ -389,7 +376,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         executeMessage(sendMessage);
     }
-
     // ввод информации в отчет
     public void writeInReport(String message, long chatId, String typeReport) {
         String num = "1234567890";
@@ -403,15 +389,12 @@ public class TelegramBot extends TelegramLongPollingBot {
             switch (message.charAt(0)) {
                 case ('1'):
                     try {
-                        String nameReport = message.substring(1, message.indexOf("-"));
-                        String release = message.substring(message.indexOf("-") + 1, message.lastIndexOf("-"));
-                        String readiness = message.substring(message.lastIndexOf('-') + 1);
+                        String[] data = message.substring(1).split("-");
+                        IOEngine.setCell1(typeReport,data,chatId);
                         if (typeReport.equals(FINISH_TYPE)) {
-                            IOEngine.setCell1F(nameReport, release, readiness, chatId);
                             sendMessages(chatId, "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 ");
                             sendMessages(chatId, "н: *2 01.01.2001/02.02.2002*");
                         } else {
-                            IOEngine.setCell1I(nameReport, release, readiness, chatId);
                             sendMessages(chatId, "2.Введите *дату начала/окончания/количество оставшихся дней и стенд*  \n\nначиная с 2 ");
                             sendMessages(chatId, "н: *2 01.01.2001/02.02.2002/32-имя стенда*");
                         }
@@ -421,33 +404,25 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case ('2'):
                     try {
+                        String[] date = message.substring(1).split("/");
+                        IOEngine.setCell2(typeReport,date,chatId);
                         if (typeReport.equals(FINISH_TYPE)) {
-                            String startDate = message.substring(1, message.indexOf("/"));
-                            String finishDate = message.substring(message.indexOf("/") + 1);
-                            IOEngine.setCell2F(startDate, finishDate, chatId);
                             sendMessages(chatId, "3.Введите *имя стенд*  \n\nначиная с 3");
                         } else {
-                            String startDate = message.substring(1, message.indexOf("/"));
-                            String finishDate = message.substring(message.indexOf("/") + 1, message.lastIndexOf('/'));
-                            String countDay = message.substring(message.lastIndexOf('/') + 1, message.indexOf("-"));
-                            String nameStand = message.substring(message.indexOf("-") + 1);
-                            IOEngine.setCell2I(startDate, finishDate, countDay, nameStand, chatId);
                             sendMessages(chatId, "3.Введите *браузеры-всего тест-кейсов/пройденных тест-кейсов - всего багов/закрых багов* через запятую \n\nначиная с 3");
                             sendMessages(chatId, " н: *3 Chrome-12/6-13/2, Safari-15/2-14/2*");
-                        }
+                            }
                     }catch (Exception e){
-                        sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
+                        sendMessages(chatId, "Кажется вы что-то забыли ввести или дата некорректна, попробуйте снова");
                     }
                     break;
                 case ('3'):
                     try {
+                        IOEngine.setCell3(typeReport, message, chatId);
+
                         if (typeReport.equals(FINISH_TYPE)) {
-                            String nameStand = message.substring(1);
-                            IOEngine.setCell3F(nameStand, chatId);
                             sendMessages(chatId, "4.Введите *операционные системы* через запятую \n\nначиная с 4");
                         } else {
-                            String[] arrayBrowsers = message.substring(1).split(",");
-                            IOEngine.setCell3I(arrayBrowsers, chatId);
                             sendMessages(chatId, "4.Введите *операционные системы/всего тест-кейсов/пройденных тест-кейсов/всего багов/закрых багов* через запятую \n\nначиная с 4");
                             sendMessages(chatId, "н: *4 Windows-12/6-13/2,MacOS-15/2-14/2*");
                         }
@@ -458,11 +433,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case ('4'):
                     try {
                         String[] arrayOS = message.substring(1).split(",");
-                        if (typeReport.equals(FINISH_TYPE)) {
-                            IOEngine.setCell4F(arrayOS, chatId);
-                        } else {
-                            IOEngine.setCell4I(arrayOS, chatId);
-                        }
+                        IOEngine.setCell4(typeReport,arrayOS,chatId);
+
                         sendMessages(chatId, "5.Введите *функции и количество багов* в них через запятую  \n\nначиная с 5 ");
                         sendMessages(chatId, "н: *5 функция-1,функция-2*");
                     }catch (Exception e){
@@ -473,6 +445,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     try {
                         String[] arrayFuncs = message.substring(1).split(",");
                         IOEngine.setCell5(typeReport, arrayFuncs, chatId);
+
                         sendMessages(chatId, "6.Введите *количество всего багов/закрыто багов и всего улучшений/улучшено через* -  \n\nначиная с 6");
                         sendMessages(chatId, "н: *6 15/12-16/13*");
                     }catch (Exception e){
@@ -481,11 +454,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case ('6'):
                     try {
-                        String countBug = message.substring(1, message.indexOf("/"));
-                        String countClosedBug = message.substring(message.indexOf("/") + 1, message.indexOf("-"));
-                        String countImprovement = message.substring(message.indexOf("-") + 1, message.lastIndexOf("/"));
-                        String countClosedImprovement = message.substring(message.lastIndexOf("/") + 1);
-                        IOEngine.setCell6(typeReport, countBug, countClosedBug, countImprovement, countClosedImprovement, chatId);
+                        String[] contBugAndImprove = message.substring(1).split("-");
+                        IOEngine.setCell6(typeReport,contBugAndImprove,chatId);
+
                         sendMessages(chatId, "7.Введите *количество багов/закрыто багов по Приоритету (High,Medium,Low)* через запятую  \n\nначиная с 7");
                         sendMessages(chatId, "н: *7 18/12,16/13,15/2*");
                     }catch (Exception e){
@@ -496,6 +467,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     try {
                         String[] arrayBugP = message.substring(1).split(",");
                         IOEngine.setCell7(typeReport, arrayBugP, chatId);
+
                         sendMessages(chatId, "8.Введите *количество багов/закрыто багов по Серьезности (Blocker,Critical,Major,Minor,Trivial)* через запятую  \n\nначиная с 8");
                         sendMessages(chatId, "н: *8 17/16,16/15,15/14,14/13,13/12*");
                     }catch (Exception e){
@@ -506,6 +478,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     try {
                         String[] arrayBugS = message.substring(1).split(",");
                         IOEngine.setCell8(typeReport, arrayBugS, chatId);
+
                         sendMessages(chatId, "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 ");
                         sendMessages(chatId, "н: *9 Модуль1(11/6),Модуль2(15/1)*");
                     }catch (Exception e){
@@ -516,6 +489,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     try{
                         String[] arrayModules = message.substring(1).split(",");
                         IOEngine.setCell9(typeReport, arrayModules, chatId);
+
                         sendMessages(chatId, "0.Введите *Примечание* \n\nначиная с 0 ");
                     }catch (Exception e){
                         sendMessages(chatId, "Кажется вы что-то забыли ввести, попробуйте снова");
@@ -525,6 +499,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     try {
                         String note = message.substring(1);
                         IOEngine.setCell0(typeReport, note, chatId);
+
                         sendPhoto(chatId, "", "SuccessBot.jpg");
                         sendMessagesAndButton(chatId, "Готово!");
                     }catch (Exception e){
@@ -570,7 +545,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error(ERROR_TEXT + e.getMessage());
         }
     }
-
     // изменение сообщения при выборе типа отчета
     private void executeEditMessageText(int nameRep1, String text, long chatId, long messageId) {
         EditMessageText message = new EditMessageText();
@@ -587,7 +561,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error(ERROR_TEXT + e.getMessage());
         }
     }
-
     private void executeMessage(SendMessage message) {
         try {
             execute(message);
@@ -595,7 +568,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             log.error(ERROR_TEXT + e.getMessage());
         }
     }
-
     private void validation(String message, long chatId, String text) {
         if (!message.equals("Help") && !message.equals("Send report") && !message.equals("New report") &&
                 !message.equals("/help") && !message.equals("/send") && !message.equals("/newreport") &&
@@ -614,6 +586,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         return messageText;
     }
+
 
 
 }
