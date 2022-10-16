@@ -33,19 +33,6 @@ public class IOEngine {
             ioCell.setCell(2,2,data[2],chatID);
         }
     }
-    public static void setCell1F(String nameReport,String release, String readiness, long chatID) {
-        IOCell ioCell= new IOCell("PatternFinalReport.xlsx");
-        ioCell.setCell(1, 1, nameReport,chatID);
-        ioCell.setCell(2, 1, release,chatID);
-        ioCell.setCell(3,1,readiness,chatID);
-    }
-
-    public static void setCell1I(String nameReport,String release, String readiness,long chatID) {
-        IOCell ioCell= new IOCell("PatternInterReport.xlsx");
-        ioCell.setCell(1, 1, nameReport,chatID);
-        ioCell.setCell(2, 1, release,chatID);
-        ioCell.setCell(2,2,readiness,chatID);
-    }
 //для 2 случая в боте
     @SneakyThrows
     public static void setCell2(String typeReport, String[] date, long chatID) {
@@ -327,8 +314,8 @@ public class IOEngine {
         validDate.put(11,"Nov");
         validDate.put(12,"Dec");
 
-        String[] arrDate = new String[3];
-        arrDate = date.split("\\.");
+        String[] arrDate;
+        arrDate = date.split("\\.",3);
 
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern("dd.MM.yyyy");

@@ -60,6 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     static final String ERROR_TEXT = "Error occurred: ";
     static final String FINISH_TYPE = "Finish";
     static final String INTER_TYPE = "Intermediate";
+    static final String NAME_MISSING = "Укажите название группы";
     private int nameRep = 0;
     //передаем конфиг в бот
     public TelegramBot(BotConfig config) {
@@ -98,8 +99,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             long chatId = update.getMessage().getChatId();
 
-
-            //проверка вида отчета и заполнение отчета в выбранные ранее тип
+            //проверка вида отчета и заполнение отчета в определенный ранее тип
             switch (nameRep) {
                 case 1:
                     writeInReport(messageText, chatId, INTER_TYPE);
@@ -110,7 +110,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     log.info("writeInReport to user " + chatId);
                     break;
             }
-
 
             //проверка ввода на команду
             switch (messageText) {
@@ -145,35 +144,37 @@ public class TelegramBot extends TelegramLongPollingBot {
                     }
                     break;
                 default:
+                    // так как после команды должен быть текст с названием группы, то проверки в default
+                    // второй if проверяет есть ли пробел после команды
                     if(messageText.contains("/newgroup")) {
                         if(messageText.contains("/newgroup ")) {
                             createGroup(update.getMessage());
                         }else{
-                            sendMessages(chatId,"Укажите название группы");
+                            sendMessages(chatId,NAME_MISSING);
                         }
                     } else if (messageText.contains("/addme")) {
                         if (messageText.contains("/addme ")) {
                             addUserInGroup(update.getMessage());
                         }else{
-                            sendMessages(chatId,"Укажите название группы");
+                            sendMessages(chatId,NAME_MISSING);
                         }
                         }else if (messageText.contains("/reqrep")) {
                             if (messageText.contains("/reqrep ")) {
                                 requestReports(update.getMessage());
                             }else{
-                                sendMessages(chatId,"Укажите название группы");
+                                sendMessages(chatId,NAME_MISSING);
                             }
                     }else if (messageText.contains("/delme")) {
                         if (messageText.contains("/delme ")) {
                             deleteFromGroup(update.getMessage());
                         }else{
-                            sendMessages(chatId,"Укажите название группы");
+                            sendMessages(chatId,NAME_MISSING);
                         }
                     }else if (messageText.contains("/delgroup")) {
                         if (messageText.contains("/delgroup ")) {
                             dropGroup(update.getMessage());
                         }else{
-                            sendMessages(chatId,"Укажите название группы");
+                            sendMessages(chatId,NAME_MISSING);
                         }
                     }
                     else if (nameRep == 0){
@@ -571,7 +572,8 @@ public class TelegramBot extends TelegramLongPollingBot {
     private void validation(String message, long chatId, String text) {
         if (!message.equals("Help") && !message.equals("Send report") && !message.equals("New report") &&
                 !message.equals("/help") && !message.equals("/send") && !message.equals("/newreport") &&
-                !message.equals("/start")) {
+                !message.equals("/start") && !message.equals("/addme")&& !message.equals("/delme")
+                && !message.equals("/newgroup") && !message.equals("/delgroup")&& !message.equals("/reqrep")) {
             if(message.charAt(0)=='/'){
                 sendMessages(chatId, "Извините, я такой команды не знаю!");
             }else {
