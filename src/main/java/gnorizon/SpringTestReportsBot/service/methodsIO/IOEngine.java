@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service.IOmethods;
+package gnorizon.SpringTestReportsBot.service.methodsIO;
 
 import lombok.SneakyThrows;
 

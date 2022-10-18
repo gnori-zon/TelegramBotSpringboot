@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service.IOmethods;
+package gnorizon.SpringTestReportsBot.service.methodsIO;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
