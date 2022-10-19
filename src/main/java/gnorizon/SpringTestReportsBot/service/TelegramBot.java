@@ -2,8 +2,8 @@ package gnorizon.SpringTestReportsBot.service;
 
 import com.vdurmont.emoji.EmojiParser;
 import gnorizon.SpringTestReportsBot.config.BotConfig;
+
 import gnorizon.SpringTestReportsBot.model.*;
-import gnorizon.SpringTestReportsBot.service.CheckSteps.CheckSteps;
 import gnorizon.SpringTestReportsBot.service.methodsIO.IOEngine;
 
 import lombok.SneakyThrows;
@@ -37,9 +37,9 @@ import java.util.*;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
-    private UserRepository userRepository;
+    public UserRepository userRepository;
     @Autowired
-    private GroupRepository groupRepository;
+    public GroupRepository groupRepository;
     final BotConfig config;
     static final String HELP_TEXT = "Этот бот формирует тест отчет из введенных вами данных и отправляет его вам в формате электронной табоицы Excel (.xlsx)\n\n" +
             "Вы можете использовать команды из главного меню в левом нижнем углу или ввести эту команду\n\n" +
@@ -146,39 +146,29 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 default:
                     // так как после команды должен быть текст с названием группы, то проверки в default
-                    // второй if проверяет есть ли пробел после команды
-                    if(messageText.contains("/newgroup")) {
+                    //второй if проверяет есть ли пробел после команды
+                    if(messageText.contains("/newgroup") || messageText.contains("/addme") ||
+                         messageText.contains("/reqrep") || messageText.contains("/delme") ||
+                         messageText.contains("/delgroup")) {
+
                         if(messageText.contains("/newgroup ")) {
                             createGroup(update.getMessage());
-                        }else{
-                            sendMessages(chatId,NAME_MISSING);
                         }
-                    } else if (messageText.contains("/addme")) {
-                        if (messageText.contains("/addme ")) {
+                        else if (messageText.contains("/delgroup ")) {
+                            dropGroup(update.getMessage());
+                        }
+                        else if (messageText.contains("/addme ")) {
                             addUserInGroup(update.getMessage());
-                        }else{
-                            sendMessages(chatId,NAME_MISSING);
                         }
-                        }else if (messageText.contains("/reqrep")) {
-                            if (messageText.contains("/reqrep ")) {
-                                requestReports(update.getMessage());
-                            }else{
-                                sendMessages(chatId,NAME_MISSING);
-                            }
-                    }else if (messageText.contains("/delme")) {
-                        if (messageText.contains("/delme ")) {
+                        else if (messageText.contains("/reqrep ")) {
+                            requestReports(update.getMessage());
+                        }
+                        else if (messageText.contains("/delme ")) {
                             deleteFromGroup(update.getMessage());
                         }else{
                             sendMessages(chatId,NAME_MISSING);
                         }
-                    }else if (messageText.contains("/delgroup")) {
-                        if (messageText.contains("/delgroup ")) {
-                            dropGroup(update.getMessage());
-                        }else{
-                            sendMessages(chatId,NAME_MISSING);
-                        }
-                    }
-                    else if (nameRep == 0){
+                    }else if (nameRep == 0){
                                 if (messageText.charAt(0) == '/') {
                                     sendPhoto(chatId, "Извините, я такой команды не знаю!", "ErrorBot.jpg");
                                 } else {
@@ -208,108 +198,39 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
+
+    /**
+     * work with DB
+     */
     private void dropGroup(Message message){
         var chatId = message.getChatId();
-        String nameGroup = getGroupName(message.getText(),9);
-        if(groupRepository.findById(nameGroup).isPresent()) {
-            Long owner = groupRepository.findById(nameGroup).get().getOwner();
-            if (owner.equals(chatId)) {
-                var users =userRepository.findAll();
-                for(User user : users){
-                    if(user.getNameGroup().equals(nameGroup)){
-                            userRepository.deleteById(user.getId());
-                    }
-                }
-                groupRepository.deleteById(nameGroup);
-                sendMessages(chatId,"Группа распущена и удалена!");
-                log.info("user: " + owner+" drop self group: " + nameGroup);
-            } else {
-                sendMessages(chatId, "Вы не владелец");
-            }
-        } else {
-            sendMessages(chatId, "Такой группы нет");
-        }
+        String response = new ModifyDB(groupRepository,userRepository).dropGroup(message,chatId);
+        sendMessages(chatId,response);
     }
     private void deleteFromGroup(Message message){
-        int success = 0;
         var chatId = message.getChatId();
-        String nameGroup = getGroupName(message.getText(),6);
-        if(groupRepository.findById(nameGroup).isPresent()){
-            var users =userRepository.findAll();
-            for(User user : users){
-                if(user.getNameGroup().equals(nameGroup)){
-                    if(user.getChatId().equals(chatId)){
-                        userRepository.deleteById(user.getId());
-                        sendMessages(chatId,"Вы вышли из группы!");
-                        success+=1;
-                        log.info("user: " + user+" remove from group: " + nameGroup);
-                    }
-                }
-            }
-            // удаление не произошло
-            if (success == 0){
-                sendMessages(chatId, "Вы не состоите в этой группе");
-            }
-
-        } else {
-            sendMessages(chatId, "Такой группы нет");
-        }
-
+        String response = new ModifyDB(groupRepository,userRepository).deleteFromGroup(message,chatId);
+        sendMessages(chatId,response);
     }
     private void requestReports(Message message){
-        var chatId = message.getChatId();
-        String nameGroup = getGroupName(message.getText(),7);
-        if(groupRepository.findById(nameGroup).isPresent()) {
-            Long owner = groupRepository.findById(nameGroup).get().getOwner();
-            if (owner.equals(chatId)) {
-                var users =userRepository.findAll();
-                for(User user : users){
-                    if(user.getNameGroup().equals(nameGroup)){
-                        sendMessages(user.getChatId(),"Группа: "+nameGroup+"-Подготовьте отчет!");
-                        sendMessages(chatId,"Сообщения отправлено!");
-                    }
-                }
-            } else {
-                sendMessages(chatId, "Вы не владелец");
-            }
-        } else {
-            sendMessages(chatId, "Такой группы нет");
+        Map<Long,String> dataAboutUsers = new ModifyDB(groupRepository,userRepository).requestReports(message);
+        for (Map.Entry<Long, String> user : dataAboutUsers.entrySet()) {
+            sendMessages(user.getKey(),user.getValue());
         }
     }
     private void createGroup(Message message) {
-        var owner = message.getChatId();
-        String nameGroup = getGroupName(message.getText(),9);
-        if(groupRepository.findById(nameGroup).isEmpty()){
-            Group group = new Group();
-
-            group.setNameGroup(nameGroup);
-            group.setOwner(owner);
-            groupRepository.save(group);
-            sendMessages(owner, "Готово! \n Имя группы: "+ group.getNameGroup());
-            log.info("group saved: " + group);
-        } else {
-            sendMessages(owner, "Такая группа уже есть");
-        }
+        var chatId = message.getChatId();
+        String response = new ModifyDB(groupRepository,userRepository).createGroup(message,chatId);
+        sendMessages(chatId,response);
     }
     private void addUserInGroup(Message message) {
         var chatId = message.getChatId();
-        String nameGroup = getGroupName(message.getText(),6);
-        if(userRepository.findById(chatId+nameGroup).isEmpty()){
-            if(groupRepository.findById(nameGroup).isPresent()) {
-                User user = new User();
-                user.setId(chatId + nameGroup);
-                user.setNameGroup(nameGroup);
-                user.setChatId(chatId);
-                userRepository.save(user);
-                sendMessages(chatId,"Вы вошли в группу");
-                log.info("user saved: " + user);
-            }else{
-                sendMessages(chatId, "Такой группы нет");
-            }
-        }else{
-            sendMessages(chatId, "Вы уже есть в этой группе");
-        }
+        String response= new ModifyDB(groupRepository,userRepository).addUserInGroup(message,chatId);
+        sendMessages(chatId,response);
     }
+    /**
+     * work with REPORT
+     */
     //выбор вида отчета
     private void newReport(long chatId) {
         SendMessage message = new SendMessage();
@@ -336,6 +257,41 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         executeMessage(message);
     }
+    // ввод информации в отчет
+    public void writeInReport(String message, long chatId, String typeReport) {
+
+        String num = "1234567890";
+        //проверка на присутсвие номера шага
+        if (!num.contains(String.valueOf(message.charAt(0)))) {
+            validation(message, chatId, "Кажется вы забыли указать номер шага");
+        }
+        // проверка на отсутсвие двухзначного числа
+        // try необходимо при неполном заполнении переменной
+        if (!num.contains(String.valueOf(message.charAt(1)))) {
+            String resp = CheckSteps.checkingAndWrite(message,chatId,typeReport);
+            String[] respArr;
+            // сообщение из 2 частей
+            if(resp.contains("XXX")){
+                respArr = resp.split("XXX");
+                sendMessages(chatId,respArr[0]);
+                sendMessages(chatId,respArr[1]);
+                //последнее сообщение
+            }else if (resp.contains("XSX")) {
+                respArr = resp.split("XSX");
+                sendPhoto(chatId, "", respArr[0]);
+                sendMessagesAndButton(chatId, respArr[1]);
+
+            }else if(!resp.contains("oups!")){
+                sendMessages(chatId,resp);
+            }
+        } else {
+            sendPhoto(chatId, "Извините, такого пункта в отчете нет!", "ErrorBot.jpg");
+        }
+    }
+    
+    /**
+     * work BOT'S LOGIC
+     */
     //создает и отправляет сообщение к /start
     private void startCommandReceived(long chatId, String firstName) {
         String answer = EmojiParser.parseToUnicode("Привет " + firstName + ", давай создадим отчет!" + ":bar_chart:");
@@ -377,36 +333,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage.setReplyMarkup(keyboardMarkup);
 
         executeMessage(sendMessage);
-    }
-    // ввод информации в отчет
-    public void writeInReport(String message, long chatId, String typeReport) {
-        String num = "1234567890";
-        //проверка на присутсвие номера шага
-        if (!num.contains(String.valueOf(message.charAt(0)))) {
-            validation(message, chatId, "Кажется вы забыли указать номер шага");
-        }
-        // проверка на отсутсвие двухзначного числа
-        // try необходимо при неполном заполнении переменной
-        if (!num.contains(String.valueOf(message.charAt(1)))) {
-            String resp = CheckSteps.checkingAndWrite(message,chatId,typeReport);
-            String[] respArr;
-            // сообщение из 2 частей
-            if(resp.contains("XXX")){
-                respArr = resp.split("XXX");
-                sendMessages(chatId,respArr[0]);
-                sendMessages(chatId,respArr[1]);
-            //последнее сообщение
-            }else if (resp.contains("XSX")) {
-                respArr = resp.split("XSX");
-                sendPhoto(chatId, "", respArr[0]);
-                sendMessagesAndButton(chatId, respArr[1]);
-
-            }else if(!resp.contains("oups!")){
-                sendMessages(chatId,resp);
-            }
-        } else {
-            sendPhoto(chatId, "Извините, такого пункта в отчете нет!", "ErrorBot.jpg");
-        }
     }
 
     @SneakyThrows
@@ -477,14 +403,5 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
     }
-    private String getGroupName(String messageText, int symbCountOfCommand){
-        messageText = messageText.substring(symbCountOfCommand);
-        for(int i =0;i<messageText.length();i++){
-            messageText= messageText.replaceAll(" ","");
-        }
-        return messageText;
-    }
-
-
 
 }

@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service.CheckSteps;
+package gnorizon.SpringTestReportsBot.service;
 
 import gnorizon.SpringTestReportsBot.service.methodsIO.IOEngine;
 
