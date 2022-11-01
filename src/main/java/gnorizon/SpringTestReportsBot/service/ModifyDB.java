@@ -1,10 +1,14 @@
 package gnorizon.SpringTestReportsBot.service;
 
+import gnorizon.SpringTestReportsBot.model.DB.Group;
+import gnorizon.SpringTestReportsBot.model.DB.GroupRepository;
+import gnorizon.SpringTestReportsBot.model.DB.User;
+import gnorizon.SpringTestReportsBot.model.DB.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import gnorizon.SpringTestReportsBot.model.*;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -113,6 +117,21 @@ public class ModifyDB {
             dataAboutUsers.put(chatId, "Такой группы нет");
         }
         return dataAboutUsers;
+    }
+    public HashMap<String,String> getAllGroup(Long chatId){
+        HashMap<String,String> mapGroups = new HashMap<>();
+        Long owner = chatId;
+        userRepository.findAll().forEach(element ->{
+            if(element.getId().contains(String.valueOf(chatId))){
+                mapGroups.put(element.getNameGroup(),"Участник");
+            }
+        });
+        groupRepository.findAll().forEach(element ->{
+            if(element.getOwner().equals(owner)){
+                mapGroups.put(element.getNameGroup(),"Владелец");
+            }
+        });
+        return mapGroups;
     }
 
     private String getGroupName(String messageText, int symbCountOfCommand){

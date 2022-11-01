@@ -3,9 +3,13 @@ package gnorizon.SpringTestReportsBot.service;
 import com.vdurmont.emoji.EmojiParser;
 import gnorizon.SpringTestReportsBot.config.BotConfig;
 
-import gnorizon.SpringTestReportsBot.model.*;
-import gnorizon.SpringTestReportsBot.service.methodsIO.IOEngine;
+import gnorizon.SpringTestReportsBot.model.DB.GroupRepository;
+import gnorizon.SpringTestReportsBot.model.DB.UserRepository;
 
+import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.model.Reports.RepositoryReports;
+import gnorizon.SpringTestReportsBot.service.fileManipulation.ReportFileManipulation;
+import gnorizon.SpringTestReportsBot.service.itemSpecifier.ItemSpecifier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,9 +41,15 @@ import java.util.*;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     @Autowired
-    public UserRepository userRepository;
+    ReportFileManipulation fileManipulation;
     @Autowired
-    public GroupRepository groupRepository;
+    RepositoryReports reports;
+    @Autowired
+    private ItemSpecifier itemSpecifier;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private GroupRepository groupRepository;
     final BotConfig config;
     static final String HELP_TEXT = "Этот бот формирует тест отчет из введенных вами данных и отправляет его вам в формате электронной табоицы Excel (.xlsx)\n\n" +
             "Вы можете использовать команды из главного меню в левом нижнем углу или ввести эту команду\n\n" +
@@ -52,6 +62,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             " *-* используйте /delme и *название группы* чтобы выйти из группы\n" +
             " *-* используйте /delgroup и *название группы* для удаления всех участников из группы и, затем, удаления группы\n" +
             " *-* используйте /reqrep и *название группы* для отправки ее участникам сообщения \"Подготовьте отчет!\"\n" +
+            " *-* используйте /mygroups для получения списка групп\n" +
 
             "\nВ процессе заполнения отчета вы можете вернуться к любому шагу и изменить сообщение\n"
             + "Удачи!";
@@ -76,6 +87,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         listOfCommands.add(new BotCommand("/reqrep", "request to prepare reports"));
         listOfCommands.add(new BotCommand("/delme", "remove yourself from the group"));
         listOfCommands.add(new BotCommand("/delgroup", "drop group"));
+        listOfCommands.add(new BotCommand("/mygroups", "get group names"));
         try {
             this.execute(new SetMyCommands(listOfCommands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
@@ -99,19 +111,19 @@ public class TelegramBot extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
 
             long chatId = update.getMessage().getChatId();
-
             //проверка вида отчета и заполнение отчета в определенный ранее тип
-            switch (nameRep) {
-                case 1:
-                    writeInReport(messageText, chatId, INTER_TYPE);
+            if(nameRep!=0) {
+                Report report = null;
+                if(nameRep==1) {
+                    report = reports.getReport(chatId + "_" + INTER_TYPE);
+                }else if (nameRep==2) {
+                    report = reports.getReport(chatId + "_" + FINISH_TYPE);
+                }
+                if(report!=null) {
+                    writeInReport(messageText, chatId, report);
                     log.info("writeInReport to user " + chatId);
-                    break;
-                case 2:
-                    writeInReport(messageText, chatId, FINISH_TYPE);
-                    log.info("writeInReport to user " + chatId);
-                    break;
+                }
             }
-
             //проверка ввода на команду
             switch (messageText) {
 
@@ -119,7 +131,6 @@ public class TelegramBot extends TelegramLongPollingBot {
                     startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                     nameRep = 0;
                     break;
-
                 case ("Help"):
                 case ("/help"):
                     sendMessages(chatId, HELP_TEXT);
@@ -130,16 +141,27 @@ public class TelegramBot extends TelegramLongPollingBot {
                     log.info("new Report to user " + chatId);
                     nameRep = 0;
                     break;
+                case("/mygroups"):
+                    getMyGroups(chatId);
+                    break;
                 case ("Send report"):
                 case ("/send"):
-                    if (nameRep == 2) {
-                        sendReport(chatId, "PatternFinalReport.xlsx");
-                        log.info("sendReport to user " + chatId);
-                        nameRep = 0;
-                    } else if (nameRep == 1) {
-                        sendReport(chatId, "PatternInterReport.xlsx");
-                        log.info("sendReport to user " + chatId);
-                        nameRep = 0;
+                    Report report =null;
+                    if(nameRep!=0) {
+                        if (nameRep == 2) {
+                            report = reports.getReport(chatId + "_" + FINISH_TYPE);
+                        } else if (nameRep == 1) {
+                            report = reports.getReport(chatId + "_" + INTER_TYPE);
+                        }
+                        if(report!=null) {
+                            fileManipulation.create(report);
+                            fileManipulation.write(report);
+                            sendReport(chatId, report.getName());
+                            reports.removeReport( report.getName());
+                            fileManipulation.delete(report);
+                            log.info("Created,filled,send and deleted report for user: " + chatId);
+                            nameRep = 0;
+                        }
                     } else {
                         sendMessages(chatId, "Отчет не заполнен");
                     }
@@ -169,6 +191,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                             sendMessages(chatId,NAME_MISSING);
                         }
                     }else if (nameRep == 0){
+
                                 if (messageText.charAt(0) == '/') {
                                     sendPhoto(chatId, "Извините, я такой команды не знаю!", "ErrorBot.jpg");
                                 } else {
@@ -179,18 +202,17 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
         } else if (update.hasCallbackQuery()) {
-
             String callBackData = update.getCallbackQuery().getData();
             long messageId = update.getCallbackQuery().getMessage().getMessageId();
             long chatId = update.getCallbackQuery().getMessage().getChatId();
 
             switch (callBackData) {
                 case (INTERMEDIATE):
-                    IOEngine.createReport(chatId, INTER_TYPE);
+                    reports.addReport(new Report(chatId+"_"+INTER_TYPE));
                     executeEditMessageText(1, "Вы, выбрали промежуточный Отчет о тестировании", chatId, messageId);
                     break;
                 case (FINAL):
-                    IOEngine.createReport(chatId, FINISH_TYPE);
+                    reports.addReport(new Report(chatId+"_"+FINISH_TYPE));
                     executeEditMessageText(2, "Вы, выбрали финальный Отчет о тестировании", chatId, messageId);
                     break;
 
@@ -202,6 +224,19 @@ public class TelegramBot extends TelegramLongPollingBot {
     /**
      * work with DB
      */
+    private void getMyGroups(Long chatId){
+        HashMap<String,String> listGroups = new ModifyDB(groupRepository,userRepository).getAllGroup(chatId);
+        if(!listGroups.isEmpty()) {
+            String response = listGroups.toString().replaceAll("\\{", "").
+                    replaceAll("\\}", "").
+                    replaceAll("=", " ").
+                    replaceAll(", ", "\n");
+            response = "Группы: \n" + response;
+            sendMessages(chatId, response);
+        }else {
+            sendMessages(chatId,"Вы не состоите в группах");
+        }
+    }
     private void dropGroup(Message message){
         var chatId = message.getChatId();
         String response = new ModifyDB(groupRepository,userRepository).dropGroup(message,chatId);
@@ -258,8 +293,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         executeMessage(message);
     }
     // ввод информации в отчет
-    public void writeInReport(String message, long chatId, String typeReport) {
-
+    public void writeInReport(String message, long chatId, Report report) {
         String num = "1234567890";
         //проверка на присутсвие номера шага
         if (!num.contains(String.valueOf(message.charAt(0)))) {
@@ -268,7 +302,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         // проверка на отсутсвие двухзначного числа
         // try необходимо при неполном заполнении переменной
         if (!num.contains(String.valueOf(message.charAt(1)))) {
-            String resp = CheckSteps.checkingAndWrite(message,chatId,typeReport);
+            String resp = itemSpecifier.checkingAndWrite(message,report);
             String[] respArr;
             // сообщение из 2 частей
             if(resp.contains("XXX")){
@@ -288,7 +322,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             sendPhoto(chatId, "Извините, такого пункта в отчете нет!", "ErrorBot.jpg");
         }
     }
-    
+
     /**
      * work BOT'S LOGIC
      */
@@ -300,7 +334,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     // отправка сообщения
     private void sendMessages(long chatId, String textToSend) {
-
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textToSend);
@@ -310,7 +343,6 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     //отправка сообщения с кнопками-клавиатурой
     private void sendMessagesAndButton(long chatId, String textToSend) {
-
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textToSend);
@@ -337,7 +369,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @SneakyThrows
     public void sendReport(long chatId, String filePath) {
-        filePath = chatId + filePath;
+        filePath = filePath +".xlsx";
         File sourceFile = new File(filePath);
         SendDocument sendDocument = new SendDocument();
         sendDocument.setChatId(String.valueOf(chatId));
@@ -349,8 +381,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }catch(TelegramApiException e){
             log.error(ERROR_TEXT + e.getMessage());
         }
-
-        IOEngine.delete(filePath);
     }
 
     @SneakyThrows
@@ -361,6 +391,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendPhoto.setChatId(String.valueOf(chatId));
         sendPhoto.setCaption(imageCaption);
         sendPhoto.setProtectContent(true);
+
         try {
             execute(sendPhoto);
             log.info("sendPhoto to user " + chatId);

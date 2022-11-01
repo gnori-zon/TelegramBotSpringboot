@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.model;
+package gnorizon.SpringTestReportsBot.model.DB;
 
 import org.springframework.data.repository.CrudRepository;
 

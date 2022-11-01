@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.model;
+package gnorizon.SpringTestReportsBot.model.DB;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
