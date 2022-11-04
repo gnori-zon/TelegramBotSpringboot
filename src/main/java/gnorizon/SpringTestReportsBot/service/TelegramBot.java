@@ -37,6 +37,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.util.*;
 
+import static gnorizon.SpringTestReportsBot.service.itemSpecifier.Items.ITEM_1;
+
 @Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
@@ -153,15 +155,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                         } else if (nameRep == 1) {
                             report = reports.getReport(chatId + "_" + INTER_TYPE);
                         }
-                        if(report!=null) {
                             fileManipulation.create(report);
                             fileManipulation.write(report);
                             sendReport(chatId, report.getName());
-                            reports.removeReport( report.getName());
                             fileManipulation.delete(report);
+                            reports.removeReport(report.getName());
                             log.info("Created,filled,send and deleted report for user: " + chatId);
                             nameRep = 0;
-                        }
                     } else {
                         sendMessages(chatId, "Отчет не заполнен");
                     }
@@ -193,7 +193,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     }else if (nameRep == 0){
 
                                 if (messageText.charAt(0) == '/') {
-                                    sendPhoto(chatId, "Извините, я такой команды не знаю!", "ErrorBot.jpg");
+                                    sendPhoto(chatId, "Извините, я такой команды не знаю!", "src/main/resources/static/ErrorBot.jpg");
                                 } else {
                                     sendMessages(chatId, "Вы забыли про '/' ");
                                 }
@@ -319,7 +319,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 sendMessages(chatId,resp);
             }
         } else {
-            sendPhoto(chatId, "Извините, такого пункта в отчете нет!", "ErrorBot.jpg");
+            sendPhoto(chatId, "Извините, такого пункта в отчете нет!",
+                    "src/main/resources/static/ErrorBot.jpg");
         }
     }
 
@@ -328,7 +329,7 @@ public class TelegramBot extends TelegramLongPollingBot {
      */
     //создает и отправляет сообщение к /start
     private void startCommandReceived(long chatId, String firstName) {
-        String answer = EmojiParser.parseToUnicode("Привет " + firstName + ", давай создадим отчет!" + ":bar_chart:");
+        String answer = EmojiParser.parseToUnicode("Привет "+ firstName +", давай создадим отчет!"+":bar_chart:");
         log.info("Replied to user " + firstName);
         sendMessagesAndButton(chatId, answer);
     }
@@ -406,8 +407,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setChatId(String.valueOf(chatId));
         message.setText(text);
         message.setMessageId((int) messageId);
-        sendMessages(chatId, "Введите *название отчета,релиз и готовность* через запятую \n\nначиная с 1");
-        sendMessages(chatId, "\nн: *1 Имя-3-готов*");
+        sendMessages(chatId, ITEM_1.textForStep);
 
         try {
             execute(message);

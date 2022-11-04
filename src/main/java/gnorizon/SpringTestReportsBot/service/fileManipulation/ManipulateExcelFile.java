@@ -35,38 +35,40 @@ public class ManipulateExcelFile {
     }
 
     // метод для записи
-    public void setCell(int row, int column, double value) {
-        Workbook workbook = null;
-        try (FileInputStream file = new FileInputStream(filePath)) {
-            workbook = new XSSFWorkbook(file);
-            Sheet sheet = workbook.getSheetAt(0);
-            sheet.getRow(row).getCell(column).setCellValue(value);
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void setCell(int row, int column, int value) {
+            Workbook workbook = null;
+            try (FileInputStream file = new FileInputStream(filePath)) {
+                workbook = new XSSFWorkbook(file);
+                Sheet sheet = workbook.getSheetAt(0);
+                sheet.getRow(row).getCell(column).setCellValue(value);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try (OutputStream fileOut = new FileOutputStream(filePath, false)) {
+                workbook.write(fileOut);
+            } catch (FileNotFoundException e) {
+                System.out.println("File is not found");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        try (OutputStream fileOut = new FileOutputStream(filePath,false)) {
-            workbook.write(fileOut);
-        } catch (FileNotFoundException e) {
-            System.out.println("File is not found");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public void setCell(int row1, int column1, String valueStr){
-        Workbook workbook = null;
-        try (FileInputStream file = new FileInputStream(filePath)) {
-            workbook = new XSSFWorkbook(file);
-            Sheet sheet = workbook.getSheetAt(0);
-            sheet.getRow(row1).getCell(column1).setCellValue(valueStr);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (OutputStream fileOut = new FileOutputStream(filePath,false)) {
-            workbook.write(fileOut);
-        } catch (FileNotFoundException e) {
-            System.out.println("File is not found");
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void setCell(int row1, int column1, String valueStr) {
+        if (valueStr != null) {
+            Workbook workbook = null;
+            try (FileInputStream file = new FileInputStream(filePath)) {
+                workbook = new XSSFWorkbook(file);
+                Sheet sheet = workbook.getSheetAt(0);
+                sheet.getRow(row1).getCell(column1).setCellValue(valueStr);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try (OutputStream fileOut = new FileOutputStream(filePath, false)) {
+                workbook.write(fileOut);
+            } catch (FileNotFoundException e) {
+                System.out.println("File is not found");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

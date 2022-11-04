@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service;
+package gnorizon.SpringTestReportsBot.service.itemSpecifier;
 
 import gnorizon.SpringTestReportsBot.model.Reports.Report;
 import lombok.SneakyThrows;
@@ -9,8 +9,8 @@ import java.util.*;
 import static gnorizon.SpringTestReportsBot.service.TelegramBot.FINISH_TYPE;
 
 public class ReportFiller {
-    private Report report;
-    private String typeReport;
+    private final Report report;
+    private final String typeReport;
 
     public ReportFiller(Report report,String typeReport) {
         this.report = report;
@@ -122,8 +122,8 @@ public class ReportFiller {
                 Integer.parseInt(countBugs[0])-Integer.parseInt(countBugs[1]))};
         String[] infoImprove = new String[]{countImprovements[0],countImprovements[1], String.valueOf(
                 Integer.parseInt(countImprovements[0])-Integer.parseInt(countImprovements[1]))};
-        report.aboutBugs.setTotalBugs(infoBugs);
-        report.aboutBugs.setTotalImprovements(infoImprove);
+        report.aboutBugs.setTotalBugs(arrayStringToInt(infoBugs));
+        report.aboutBugs.setTotalImprovements(arrayStringToInt(infoImprove));
     }
 
     //для 7 случая в боте
@@ -140,9 +140,9 @@ public class ReportFiller {
             divide[i] = String.valueOf(Integer.parseInt((openBug)) - Integer.parseInt((closeBug)));
         }
         ;
-        report.aboutBugs.setHigh((arrayBugP[0] + "/"+ divide[0]).split("/"));
-        report.aboutBugs.setMedium((arrayBugP[1] + "/"+ divide[1]).split("/"));
-        report.aboutBugs.setLow((arrayBugP[2] + "/"+ divide[2]).split("/"));
+        report.aboutBugs.setHigh(arrayStringToInt((arrayBugP[0] + "/"+ divide[0]).split("/")));
+        report.aboutBugs.setMedium(arrayStringToInt((arrayBugP[1] + "/"+ divide[1]).split("/")));
+        report.aboutBugs.setLow(arrayStringToInt((arrayBugP[2] + "/"+ divide[2]).split("/")));
     }
     public void fillItem8(String message) {
         String[] arrayBugS = message.substring(1).split(",");
@@ -156,11 +156,11 @@ public class ReportFiller {
             String closeBug = arrayBugS[i].substring(arrayBugS[i].indexOf("/")+1);
             divide[i] = String.valueOf(Integer.parseInt((openBug)) - Integer.parseInt((closeBug)));
             }
-        report.aboutBugs.setBlockers((arrayBugS[0] + "/"+ divide[0]).split("/"));
-        report.aboutBugs.setCritical((arrayBugS[1] + "/"+ divide[1]).split("/"));
-        report.aboutBugs.setMajors((arrayBugS[2] + "/"+ divide[2]).split("/"));
-        report.aboutBugs.setMinors((arrayBugS[3] + "/"+ divide[3]).split("/"));
-        report.aboutBugs.setTrivial((arrayBugS[4] + "/"+ divide[4]).split("/"));
+        report.aboutBugs.setBlockers(arrayStringToInt((arrayBugS[0] + "/"+ divide[0]).split("/")));
+        report.aboutBugs.setCritical(arrayStringToInt((arrayBugS[1] + "/"+ divide[1]).split("/")));
+        report.aboutBugs.setMajors(arrayStringToInt((arrayBugS[2] + "/"+ divide[2]).split("/")));
+        report.aboutBugs.setMinors(arrayStringToInt((arrayBugS[3] + "/"+ divide[3]).split("/")));
+        report.aboutBugs.setTrivial(arrayStringToInt((arrayBugS[4] + "/"+ divide[4]).split("/")));
         }
 
     public void fillItem9(String message){
@@ -234,4 +234,7 @@ public class ReportFiller {
         }
     }
 
+    private int[] arrayStringToInt(String[] arrStr){
+        return Arrays.stream(arrStr).mapToInt(Integer::parseInt).toArray();
+    }
 }

@@ -21,79 +21,80 @@ public class InformationAboutBugs {
         return totalBugs;
     }
 
-    public void setTotalBugs(String[] totalBugs) {
-        this.totalBugs = Arrays.stream(totalBugs).mapToInt(Integer::parseInt).toArray();
+    public void setTotalBugs(int[] totalBugs) {
+        this.totalBugs = totalBugs;
     }
 
     public int[] getTotalImprovements() {
         return totalImprovements;
     }
 
-    public void setTotalImprovements(String[] totalImprovements) {
-        this.totalImprovements = Arrays.stream(totalImprovements).mapToInt(Integer::parseInt).toArray();
+    public void setTotalImprovements(int[] totalImprovements) {
+        this.totalImprovements = totalImprovements;
     }
 
     public int[] getBlockers() {
         return blockers;
     }
 
-    public void setBlockers(String[] blockers) {
-        this.blockers = Arrays.stream(blockers).mapToInt(Integer::parseInt).toArray();
+    public void setBlockers(int[] blockers) {
+        this.blockers = blockers;
     }
 
     public int[] getCritical() {
         return critical;
     }
 
-    public void setCritical(String[] critical) {
-        this.critical = Arrays.stream(critical).mapToInt(Integer::parseInt).toArray();
+    public void setCritical(int[] critical) {
+        this.critical = critical;
     }
 
     public int[] getMajors() {
         return majors;
     }
 
-    public void setMajors(String[] majors) {
-        this.majors = Arrays.stream(majors).mapToInt(Integer::parseInt).toArray();
+    public void setMajors(int[] majors) {
+        this.majors = majors;
     }
 
     public int[] getMinors() {
         return minors;
     }
 
-    public void setMinors(String[] minors) {
-        this.minors = Arrays.stream(minors).mapToInt(Integer::parseInt).toArray();
+    public void setMinors(int[] minors) {
+        this.minors = minors;
     }
 
     public int[] getTrivial() {
         return trivial;
     }
 
-    public void setTrivial(String[] trivial) {
-        this.trivial = Arrays.stream(trivial).mapToInt(Integer::parseInt).toArray();
+    public void setTrivial(int[] trivial) {
+        this.trivial = trivial;
     }
 
     public int[] getHigh() {
         return high;
     }
 
-    public void setHigh(String[] high) {
-        this.high = Arrays.stream(high).mapToInt(Integer::parseInt).toArray();
+    public void setHigh(int[] high) {
+        this.high = high;
     }
 
     public int[] getMedium() {
         return medium;
     }
 
-    public void setMedium(String[] medium) {
-        this.medium = Arrays.stream(medium).mapToInt(Integer::parseInt).toArray();
+    public void setMedium(int[] medium) {
+        this.medium = medium;
     }
 
     public int[] getLow() {
         return low;
     }
 
-    public void setLow(String[] low) {
-        this.low = Arrays.stream(low).mapToInt(Integer::parseInt).toArray();
+    public void setLow(int[] low) {
+        this.low = low;
     }
+
 }
