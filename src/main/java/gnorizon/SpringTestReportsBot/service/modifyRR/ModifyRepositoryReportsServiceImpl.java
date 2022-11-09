@@ -1,6 +1,6 @@
 package gnorizon.SpringTestReportsBot.service.modifyRR;
 
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import gnorizon.SpringTestReportsBot.repository.RepositoryReports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

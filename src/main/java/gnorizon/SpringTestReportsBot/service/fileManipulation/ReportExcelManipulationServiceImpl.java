@@ -1,7 +1,7 @@
 package gnorizon.SpringTestReportsBot.service.fileManipulation;
 
 import gnorizon.SpringTestReportsBot.model.ManipulateExcelFile;
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import org.springframework.stereotype.Component;
 
 import java.io.File;

@@ -1,7 +1,7 @@
 package gnorizon.SpringTestReportsBot.command.commands;
 
 import gnorizon.SpringTestReportsBot.command.Command;
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import gnorizon.SpringTestReportsBot.service.clientAttribute.ClientAttributeModifyService;
 import gnorizon.SpringTestReportsBot.service.modifyRR.ModifyRepositoryReportsService;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotDocumentService;

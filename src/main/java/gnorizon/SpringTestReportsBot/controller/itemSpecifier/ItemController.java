@@ -1,7 +1,7 @@
 package gnorizon.SpringTestReportsBot.controller.itemSpecifier;
 
 import gnorizon.SpringTestReportsBot.config.Items;
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import gnorizon.SpringTestReportsBot.service.ReportFillerService;
 import org.springframework.stereotype.Controller;
 

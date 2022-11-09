@@ -1,6 +1,6 @@
 package gnorizon.SpringTestReportsBot.service.fileManipulation;
 
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 
 public interface ReportFileManipulationService {
     void create(Report report);

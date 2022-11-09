@@ -1,6 +1,6 @@
 package gnorizon.SpringTestReportsBot.service.modifyRR;
 
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 
 public interface ModifyRepositoryReportsService {
     void addReport(Report report);

@@ -1,7 +1,6 @@
 package gnorizon.SpringTestReportsBot.repository;
 
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
-import org.springframework.stereotype.Component;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

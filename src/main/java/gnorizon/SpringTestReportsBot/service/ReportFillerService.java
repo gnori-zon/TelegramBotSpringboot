@@ -1,6 +1,6 @@
 package gnorizon.SpringTestReportsBot.service;
 
-import gnorizon.SpringTestReportsBot.model.Reports.Report;
+import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import lombok.SneakyThrows;
 
 import java.text.SimpleDateFormat;

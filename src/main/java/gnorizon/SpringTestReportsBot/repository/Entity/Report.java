@@ -1,6 +1,6 @@
-package gnorizon.SpringTestReportsBot.model.Reports;
+package gnorizon.SpringTestReportsBot.repository.Entity;
 
-import gnorizon.SpringTestReportsBot.model.Reports.AttributesReport.*;
+import gnorizon.SpringTestReportsBot.repository.Entity.AttributesReport.*;
 
 public class Report {
     private String name;// chatId_typeReport
