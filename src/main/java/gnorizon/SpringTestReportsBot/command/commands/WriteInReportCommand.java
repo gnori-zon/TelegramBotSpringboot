@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 import static gnorizon.SpringTestReportsBot.TelegramBot.INTER_TYPE;
+/**
+ * Write data in report {@link Command}.
+ */
 @Slf4j
 public class WriteInReportCommand implements Command {
     private final ItemSpecifier itemSpecifier;

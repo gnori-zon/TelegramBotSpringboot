@@ -4,7 +4,9 @@ import gnorizon.SpringTestReportsBot.command.Command;
 import gnorizon.SpringTestReportsBot.service.modifyDB.ModifyDataBaseService;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+/**
+ * Delete me for group {@link Command}.
+ */
 public class DeleteMeForGroupCommand implements Command {
     private final String NAME_MISSING = "Укажите название группы";
     private final SendBotMessageService sendBotMessageService;

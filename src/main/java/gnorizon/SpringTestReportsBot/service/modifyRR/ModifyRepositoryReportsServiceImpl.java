@@ -5,6 +5,9 @@ import gnorizon.SpringTestReportsBot.repository.RepositoryReports;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation {@link ModifyRepositoryReportsService}
+ */
 @Service
 public class ModifyRepositoryReportsServiceImpl implements ModifyRepositoryReportsService{
     RepositoryReports reports;

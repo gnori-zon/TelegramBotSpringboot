@@ -1,5 +1,7 @@
 package gnorizon.SpringTestReportsBot.command;
-
+/**
+ * Enumeration for {@link Command}'s.
+ */
 public enum CommandName {
     START("/start"),
     NEW_REPORT("/newreport"),

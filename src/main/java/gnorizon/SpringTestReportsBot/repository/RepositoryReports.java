@@ -5,6 +5,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+/**
+ * {@link Repository} for {@link Report} entity.
+ */
 @Repository
 public class RepositoryReports {
     private Map<String, Report> reports = new HashMap<>();

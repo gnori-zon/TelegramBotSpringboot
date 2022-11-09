@@ -1,7 +1,11 @@
 package gnorizon.SpringTestReportsBot.repository.Entity;
 
 import gnorizon.SpringTestReportsBot.repository.Entity.AttributesReport.*;
+import gnorizon.SpringTestReportsBot.repository.RepositoryReports;
 
+/**
+ * Entity-model for {@link RepositoryReports} consisting of attributes
+ */
 public class Report {
     private String name;// chatId_typeReport
     public GeneralInformation generalInformation;

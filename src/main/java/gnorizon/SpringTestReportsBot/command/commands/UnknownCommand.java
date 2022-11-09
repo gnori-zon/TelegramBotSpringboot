@@ -4,7 +4,9 @@ import gnorizon.SpringTestReportsBot.command.Command;
 import gnorizon.SpringTestReportsBot.service.clientAttribute.ClientAttributeModifyService;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotDocumentService;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+/**
+ * Unknown command for bot  {@link Command}.
+ */
 public class UnknownCommand implements Command {
     private final SendBotDocumentService sendBotDocumentService;
     private final ClientAttributeModifyService clientAttributeModifyService;

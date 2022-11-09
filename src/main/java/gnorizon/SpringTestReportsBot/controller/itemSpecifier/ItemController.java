@@ -7,6 +7,9 @@ import org.springframework.stereotype.Controller;
 
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 
+/**
+ * Implementation {@link ItemSpecifier}
+ */
 @Controller
 public class ItemController implements ItemSpecifier{
     private final String LAST_TEXT = "src/main/resources/static/SuccessBot.jpg" + "XSXГотово!";

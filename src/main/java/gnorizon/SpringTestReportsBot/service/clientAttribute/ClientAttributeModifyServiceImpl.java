@@ -4,6 +4,9 @@ import gnorizon.SpringTestReportsBot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation {@link ClientAttributeModifyService}
+ */
 @Service
 public class ClientAttributeModifyServiceImpl implements ClientAttributeModifyService{
     TelegramBot telegramBot;

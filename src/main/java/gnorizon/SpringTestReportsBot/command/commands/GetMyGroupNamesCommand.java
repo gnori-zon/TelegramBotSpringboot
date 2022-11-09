@@ -6,7 +6,9 @@ import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
-
+/**
+ * Get my group name (work with DB) {@link Command}.
+ */
 public class GetMyGroupNamesCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
     private final ModifyDataBaseService modifyDataBaseService;

@@ -18,6 +18,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Implementation {@link SendBotDocumentService} and {@link SendBotMessageService}
+ */
 @Slf4j
 @Service
 public class SendBotAllServiceImpl implements SendBotMessageService,SendBotDocumentService{

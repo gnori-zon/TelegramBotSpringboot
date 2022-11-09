@@ -4,7 +4,9 @@ import com.vdurmont.emoji.EmojiParser;
 import gnorizon.SpringTestReportsBot.command.Command;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+/**
+ * Start {@link Command}.
+ */
 public class StartCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
 

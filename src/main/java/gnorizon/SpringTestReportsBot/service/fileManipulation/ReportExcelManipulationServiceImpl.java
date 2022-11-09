@@ -2,7 +2,7 @@ package gnorizon.SpringTestReportsBot.service.fileManipulation;
 
 import gnorizon.SpringTestReportsBot.model.ManipulateExcelFile;
 import gnorizon.SpringTestReportsBot.repository.Entity.Report;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
@@ -11,7 +11,10 @@ import java.util.Set;
 
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 
-@Component
+/**
+ * Implementation {@link ReportFileManipulationService}
+ */
+@Service
 public class ReportExcelManipulationServiceImpl implements ReportFileManipulationService {
 
     @Override

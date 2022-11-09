@@ -3,7 +3,9 @@ package gnorizon.SpringTestReportsBot.command.commands;
 import gnorizon.SpringTestReportsBot.command.Command;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+/**
+ * Help {@link Command}.
+ */
 public class HelpCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
 

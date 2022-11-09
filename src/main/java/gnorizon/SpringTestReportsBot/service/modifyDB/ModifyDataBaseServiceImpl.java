@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation {@link ModifyDataBaseService}
+ */
 @Slf4j
 @Service
 public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {

@@ -10,7 +10,9 @@ import gnorizon.SpringTestReportsBot.service.fileManipulation.ReportFileManipula
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
+/**
+ * Send me report {@link Command}.
+ */
 @Slf4j
 public class SendReportCommand implements Command {
     @Autowired

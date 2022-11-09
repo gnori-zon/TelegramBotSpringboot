@@ -2,12 +2,17 @@ package gnorizon.SpringTestReportsBot.service;
 
 import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import lombok.SneakyThrows;
+import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 
+/**
+ * Service with fill model-entity {@link Report}
+ */
+@Service
 public class ReportFillerService {
     private final Report report;
     private final String typeReport;

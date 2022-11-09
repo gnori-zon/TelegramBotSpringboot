@@ -11,6 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * New report {@link Command}.
+ */
 @Slf4j
 public class NewReportCommand implements Command {
     private final SendBotMessageService sendBotMessageService;

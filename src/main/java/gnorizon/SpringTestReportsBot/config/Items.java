@@ -1,5 +1,10 @@
 package gnorizon.SpringTestReportsBot.config;
 
+import gnorizon.SpringTestReportsBot.controller.itemSpecifier.ItemController;
+
+/**
+ * Enumeration for controller {@link ItemController}'s.
+ */
 public enum Items {
     ITEM_1('1',"Введите *название отчета,релиз и готовность* через запятую \n\nначиная с 1"+
             "\nн: *1 Имя-3-готов*" ),

@@ -6,7 +6,9 @@ import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Map;
-
+/**
+ * Send all group users request for report  (work with DB) {@link Command}.
+ */
 public class RequestForReportCommand implements Command {
     private final String NAME_MISSING = "Укажите название группы";
 

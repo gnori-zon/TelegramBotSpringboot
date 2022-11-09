@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 import static gnorizon.SpringTestReportsBot.TelegramBot.INTER_TYPE;
 import static gnorizon.SpringTestReportsBot.config.Items.ITEM_1;
+/**
+ * Add report to repository (work with DB) {@link Command}.
+ */
 @Slf4j
 public class AddReportToRepositoryCommand implements Command {
     private static final String INTERMEDIATE = "INT_REPORT_BUTTON";
