@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service.itemSpecifier;
+package gnorizon.SpringTestReportsBot.service;
 
 import gnorizon.SpringTestReportsBot.model.Reports.Report;
 import lombok.SneakyThrows;
@@ -6,13 +6,13 @@ import lombok.SneakyThrows;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static gnorizon.SpringTestReportsBot.service.TelegramBot.FINISH_TYPE;
+import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 
-public class ReportFiller {
+public class ReportFillerService {
     private final Report report;
     private final String typeReport;
 
-    public ReportFiller(Report report,String typeReport) {
+    public ReportFillerService(Report report, String typeReport) {
         this.report = report;
         this.typeReport = typeReport;
     }

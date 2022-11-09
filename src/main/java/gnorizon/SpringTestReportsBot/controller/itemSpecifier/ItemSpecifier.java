@@ -1,4 +1,4 @@
-package gnorizon.SpringTestReportsBot.service.itemSpecifier;
+package gnorizon.SpringTestReportsBot.controller.itemSpecifier;
 
 import gnorizon.SpringTestReportsBot.model.Reports.Report;
 

@@ -1,25 +1,28 @@
-package gnorizon.SpringTestReportsBot.service;
+package gnorizon.SpringTestReportsBot.service.modifyDB;
 
-import gnorizon.SpringTestReportsBot.model.DB.Group;
-import gnorizon.SpringTestReportsBot.model.DB.GroupRepository;
-import gnorizon.SpringTestReportsBot.model.DB.User;
-import gnorizon.SpringTestReportsBot.model.DB.UserRepository;
+import gnorizon.SpringTestReportsBot.repository.Entity.Group;
+import gnorizon.SpringTestReportsBot.repository.GroupRepository;
+import gnorizon.SpringTestReportsBot.repository.Entity.User;
+import gnorizon.SpringTestReportsBot.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ModifyDB {
-    private UserRepository userRepository;
-    private GroupRepository groupRepository;
-    public ModifyDB(GroupRepository groupRepository,UserRepository userRepository){
+@Service
+public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
+    private final UserRepository userRepository;
+    private final  GroupRepository groupRepository;
+    @Autowired
+    public ModifyDataBaseServiceImpl(GroupRepository groupRepository, UserRepository userRepository){
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
     }
-
+    @Override
     public String addUserInGroup(Message message, Long chatId) {
         String nameGroup = getGroupName(message.getText(),6);
         if(userRepository.findById(chatId+nameGroup).isEmpty()){
@@ -39,6 +42,7 @@ public class ModifyDB {
         }
     }
 
+    @Override
     public String createGroup(Message message,Long owner) {
         String nameGroup = getGroupName(message.getText(),9);
         if(groupRepository.findById(nameGroup).isEmpty()){
@@ -53,49 +57,49 @@ public class ModifyDB {
             return "Такая группа уже есть";
         }
     }
-
-        public String deleteFromGroup(Message message, Long chatId){
-            String nameGroup = getGroupName(message.getText(),6);
-            if(groupRepository.findById(nameGroup).isPresent()){
+    @Override
+    public String deleteFromGroup(Message message, Long chatId){
+        String nameGroup = getGroupName(message.getText(),6);
+        if(groupRepository.findById(nameGroup).isPresent()){
+            var users =userRepository.findAll();
+            for(User user : users){
+                if(user.getNameGroup().equals(nameGroup)){
+                    if(user.getChatId().equals(chatId)){
+                        userRepository.deleteById(user.getId());
+                        log.info("user: " + user+" remove from group: " + nameGroup);
+                        return"Вы вышли из группы!";
+                    }
+                }
+            }
+            // удаление не произошло
+            return "Вы не состоите в этой группе";
+        } else {
+            return "Такой группы нет";
+        }
+    }
+    @Override
+    public String dropGroup(Message message,Long chatId){
+        String nameGroup = getGroupName(message.getText(),9);
+        if(groupRepository.findById(nameGroup).isPresent()) {
+            Long owner = groupRepository.findById(nameGroup).get().getOwner();
+            if (owner.equals(chatId)) {
                 var users =userRepository.findAll();
                 for(User user : users){
                     if(user.getNameGroup().equals(nameGroup)){
-                        if(user.getChatId().equals(chatId)){
-                            userRepository.deleteById(user.getId());
-                            log.info("user: " + user+" remove from group: " + nameGroup);
-                            return"Вы вышли из группы!";
-                        }
+                        userRepository.deleteById(user.getId());
                     }
                 }
-                // удаление не произошло
-                    return "Вы не состоите в этой группе";
+                groupRepository.deleteById(nameGroup);
+                log.info("user: " + owner+" drop self group: " + nameGroup);
+                return "Группа распущена и удалена!";
             } else {
-                return "Такой группы нет";
+                return "Вы не владелец";
             }
+        } else {
+            return "Такой группы нет";
         }
-
-        public String dropGroup(Message message,Long chatId){
-            String nameGroup = getGroupName(message.getText(),9);
-            if(groupRepository.findById(nameGroup).isPresent()) {
-                Long owner = groupRepository.findById(nameGroup).get().getOwner();
-                if (owner.equals(chatId)) {
-                    var users =userRepository.findAll();
-                    for(User user : users){
-                        if(user.getNameGroup().equals(nameGroup)){
-                            userRepository.deleteById(user.getId());
-                        }
-                    }
-                    groupRepository.deleteById(nameGroup);
-                    log.info("user: " + owner+" drop self group: " + nameGroup);
-                    return "Группа распущена и удалена!";
-                } else {
-                    return "Вы не владелец";
-                }
-            } else {
-                return "Такой группы нет";
-            }
-        }
-
+    }
+    @Override
     public Map<Long,String> requestReports(Message message){
         var chatId = message.getChatId();
         Map<Long,String> dataAboutUsers= new HashMap<>();
@@ -118,6 +122,7 @@ public class ModifyDB {
         }
         return dataAboutUsers;
     }
+    @Override
     public HashMap<String,String> getAllGroup(Long chatId){
         HashMap<String,String> mapGroups = new HashMap<>();
         Long owner = chatId;

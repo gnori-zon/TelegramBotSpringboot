@@ -1,5 +1,6 @@
 package gnorizon.SpringTestReportsBot.service.fileManipulation;
 
+import gnorizon.SpringTestReportsBot.model.ManipulateExcelFile;
 import gnorizon.SpringTestReportsBot.model.Reports.Report;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gnorizon.SpringTestReportsBot.service.TelegramBot.FINISH_TYPE;
+import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 
 @Component
-public class ReportExcelManipulation implements ReportFileManipulation {
+public class ReportExcelManipulationServiceImpl implements ReportFileManipulationService {
 
     @Override
     public void create(Report report){
@@ -113,9 +114,11 @@ public class ReportExcelManipulation implements ReportFileManipulation {
             excelFile.setCell(2, 1,report.generalInformation.getNumberRelease());
             excelFile.setCell(2, 2,report.generalInformation.getReadiness());
             // заполнение сроков
-            excelFile.setCell(4, 1,report.generalInformation.getStartTime());
+            excelFile.setCell(4, 1, report.generalInformation.getStartTime());
             excelFile.setCell(5, 1,report.generalInformation.getEndTime());
-            excelFile.setCell(6, 1,report.generalInformation.getDaysLeft());
+            if(report.generalInformation.getDaysLeft()!=null) {
+                excelFile.setCell(6, 1, Integer.parseInt(report.generalInformation.getDaysLeft()));
+            }
             //заполнение окружения
             excelFile.setCell(12, 1,report.environment.getStandName());
             writeMap(report.environment.getBrowsersInformation(),21,excelFile);
@@ -211,6 +214,8 @@ public class ReportExcelManipulation implements ReportFileManipulation {
         if (map!=null) {
             Set<String> names = map.keySet();
             int i = 0;
+            int countAll = 0;
+            int countClosed = 0;
             for (String name : names) {
                 List<Integer> value = map.get(name);
                 excelFile.setCell(29 + i, 0, name);
@@ -222,12 +227,14 @@ public class ReportExcelManipulation implements ReportFileManipulation {
                 if (filepath.contains(FINISH_TYPE)) {
                     excelFile.setCell(29 + i, 3, value.get(2));
                 }
-                if (i == 0) {
-                    excelFile.setCell(35, 1, value.get(3));
-                    excelFile.setCell(35, 2, value.get(4));
+                if(countAll < value.get(3)){
+                    countAll = value.get(3);
+                    countClosed =  value.get(4);
                 }
                 i++;
             }
+            excelFile.setCell(35, 1,countAll);
+            excelFile.setCell(35, 2,countClosed);
         }
     }
 
