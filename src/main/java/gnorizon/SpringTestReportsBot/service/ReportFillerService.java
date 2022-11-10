@@ -24,7 +24,7 @@ public class ReportFillerService {
 
     public void fillItem1(String message) {
         String[] data = message.substring(1).split("-");
-        report.generalInformation.setName(data[0]);
+        report.generalInformation.setName(data[0].charAt(0)==' '?data[0].substring(1) : data[0]);
         report.generalInformation.setNumberRelease(data[1]);
         report.generalInformation.setReadiness(data[2]);
         }
@@ -48,7 +48,7 @@ public class ReportFillerService {
     public void fillItem3(String message) {
         message = message.substring(1);
         if (typeReport.equals(FINISH_TYPE)) {
-            report.environment.setStandName(message);
+            report.environment.setStandName(message.charAt(0)==' '? message.substring(1) : message);
         }else{
             String arrayBrowsers[] = message.split(",");
             Map<String, List<Integer>> browsersInformation = new HashMap<>();
@@ -74,7 +74,11 @@ public class ReportFillerService {
     public void fillItem4(String message) {
 
         String[] arrayOS = message.substring(1).split(",");
-        arrayOS[0] = arrayOS[0].replaceAll(" ","");
+        int index = 0;
+        for(String item : arrayOS){
+            arrayOS[index]= item.replaceAll(" ","");
+            index++;
+        }
         if (typeReport.equals(FINISH_TYPE)) {
             // количесво элементов не должно привышать 9
             int count = Math.min(arrayOS.length, 9);

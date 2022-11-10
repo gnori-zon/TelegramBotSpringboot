@@ -30,14 +30,14 @@ public enum Items {
     ITEM_10('0', "0.Введите *Примечание* \n\nначиная с 0 "),;
     public Character step;
     public String textForStep;
-    public String textForStep2;
+    public String textForNotFinalRep;
     Items(Character step,String textForStep){
         this.step = step;
         this.textForStep = textForStep;
     }
-    Items(Character step, String textForStep, String textForStep2){
+    Items(Character step, String textForStep, String textForNotFinalRep){
         this.step = step;
         this.textForStep = textForStep;
-        this.textForStep2 = textForStep2;
+        this.textForNotFinalRep = textForNotFinalRep;
     }
 }

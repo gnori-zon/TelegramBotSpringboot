@@ -28,7 +28,7 @@ public class ItemController implements ItemSpecifier{
                     if (typeReport.equals(FINISH_TYPE)) {
                         return Items.ITEM_2.textForStep;
                     } else {
-                        return Items.ITEM_2.textForStep2;
+                        return Items.ITEM_2.textForNotFinalRep;
                     }
                 }else if(stepNumber== Items.ITEM_2.step) {
                     filler.fillItem2(message);
@@ -36,7 +36,7 @@ public class ItemController implements ItemSpecifier{
                     if (typeReport.equals(FINISH_TYPE)) {
                         return Items.ITEM_3.textForStep;
                     } else {
-                        return Items.ITEM_3.textForStep2;
+                        return Items.ITEM_3.textForNotFinalRep;
                     }
                 }else if(stepNumber== Items.ITEM_3.step) {
                     filler.fillItem3(message);
@@ -44,7 +44,7 @@ public class ItemController implements ItemSpecifier{
                     if (typeReport.equals(FINISH_TYPE)) {
                         return Items.ITEM_4.textForStep;
                     } else {
-                        return Items.ITEM_4.textForStep2;
+                        return Items.ITEM_4.textForNotFinalRep;
                     }
                 }else if(stepNumber== Items.ITEM_4.step) {
                     filler.fillItem4(message);
