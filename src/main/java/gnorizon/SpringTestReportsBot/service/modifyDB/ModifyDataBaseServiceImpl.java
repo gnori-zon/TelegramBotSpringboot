@@ -61,9 +61,7 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
         }
     }
     @Override
-    public String deleteFromGroup(Message message, Long chatId){
-        String nameGroup = getGroupName(message.getText(),6);
-        if(groupRepository.findById(nameGroup).isPresent()){
+    public String deleteFromGroup(String nameGroup, Long chatId){
             var users =userRepository.findAll();
             for(User user : users){
                 if(user.getNameGroup().equals(nameGroup)){
@@ -76,53 +74,30 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
             }
             // удаление не произошло
             return "Вы не состоите в этой группе";
-        } else {
-            return "Такой группы нет";
-        }
     }
     @Override
-    public String dropGroup(Message message,Long chatId){
-        String nameGroup = getGroupName(message.getText(),9);
-        if(groupRepository.findById(nameGroup).isPresent()) {
-            Long owner = groupRepository.findById(nameGroup).get().getOwner();
-            if (owner.equals(chatId)) {
-                var users =userRepository.findAll();
-                for(User user : users){
-                    if(user.getNameGroup().equals(nameGroup)){
-                        userRepository.deleteById(user.getId());
-                    }
-                }
-                groupRepository.deleteById(nameGroup);
-                log.info("user: " + owner+" drop self group: " + nameGroup);
-                return "Группа распущена и удалена!";
-            } else {
-                return "Вы не владелец";
+    public String dropGroup(String  nameGroup,Long chatId){
+        var users =userRepository.findAll();
+        for(User user : users){
+            if(nameGroup.equals(user.getNameGroup())){
+                userRepository.deleteById(user.getId());
             }
-        } else {
-            return "Такой группы нет";
         }
+        groupRepository.deleteById(nameGroup);
+        log.info("user: " + chatId +" drop self group: " + nameGroup);
+        return "Группа распущена и удалена!";
     }
     @Override
-    public Map<Long,String> requestReports(Message message){
-        var chatId = message.getChatId();
+    public Map<Long,String> requestReports(String nameGroup,Long chatId){
         Map<Long,String> dataAboutUsers= new HashMap<>();
-        String nameGroup = getGroupName(message.getText(),7);
-        if(groupRepository.findById(nameGroup).isPresent()) {
-            Long owner = groupRepository.findById(nameGroup).get().getOwner();
-            if (owner.equals(chatId)) {
-                var users =userRepository.findAll();
-                for(User user : users){
-                    if(user.getNameGroup().equals(nameGroup)){
-                        dataAboutUsers.put(user.getChatId(),"Группа: "+nameGroup+"-Подготовьте отчет!");
-                    }
-                }
-                dataAboutUsers.put(chatId,"Сообщения отправлены!");
-            } else {
-                dataAboutUsers.put(chatId, "Вы не владелец");
+        Long owner = groupRepository.findById(nameGroup).get().getOwner();
+        var users =userRepository.findAll();
+        for(User user : users){
+            if(nameGroup.equals(user.getNameGroup())){
+                dataAboutUsers.put(user.getChatId(),"Группа: "+nameGroup+"-Подготовьте отчет!");
             }
-        } else {
-            dataAboutUsers.put(chatId, "Такой группы нет");
         }
+        dataAboutUsers.put(chatId,"Сообщения отправлены!");
         return dataAboutUsers;
     }
     @Override
@@ -130,13 +105,17 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
         HashMap<String,String> mapGroups = new HashMap<>();
         Long owner = chatId;
         userRepository.findAll().forEach(element ->{
-            if(element.getId().contains(String.valueOf(chatId))){
-                mapGroups.put(element.getNameGroup(),"Участник");
+            if(element.getId()!=null) {
+                if (element.getId().contains(String.valueOf(chatId))) {
+                    mapGroups.put(element.getNameGroup(), "Участник");
+                }
             }
         });
         groupRepository.findAll().forEach(element ->{
-            if(element.getOwner().equals(owner)){
-                mapGroups.put(element.getNameGroup(),"Владелец");
+            if(element.getOwner()!=null) {
+                if (element.getOwner().equals(owner)) {
+                    mapGroups.put(element.getNameGroup(), "Владелец");
+                }
             }
         });
         return mapGroups;

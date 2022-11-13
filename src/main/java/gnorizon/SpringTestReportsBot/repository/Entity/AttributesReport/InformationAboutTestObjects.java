@@ -5,6 +5,6 @@ import lombok.Data;
 import java.util.Map;
 @Data
 public class InformationAboutTestObjects {
-    // название и количество багов
+    // map<func name, list<total, closed>> | map<имя функции, list<всего, закрыто>>
     private Map<String,Integer> functionalityInformation;
 }

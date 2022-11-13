@@ -115,7 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 }
             }
         } else if (update.hasCallbackQuery()) {
-            commandContainer.addReportToRepo().execute(update);
+            commandContainer.retrieveCommandCB(update.getCallbackQuery().getData().substring(0,6)).execute(update);
         }
     }
 

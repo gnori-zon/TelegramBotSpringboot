@@ -13,7 +13,12 @@ public enum CommandName {
     DEL_ME("/delme"),
     DEL_GROUP("/delgroup"),
     MY_GROUPS("/mygroups"),
-    NO("nocommand");
+    NO("nocommand"),
+    CANCEL_CB("Cancel-"),
+    DEL_GROUP_CB("DelGroup-"),
+    DEL_ME_CB("DelMe-"),
+    ADD_REP_TO_REPO("INT_REPORT_BUTTON"+"FIN_REPORT_BUTTON"),
+    REQ_REP_CB("ReqRep-");
     private final String commandName;
 
     CommandName(String commandName){

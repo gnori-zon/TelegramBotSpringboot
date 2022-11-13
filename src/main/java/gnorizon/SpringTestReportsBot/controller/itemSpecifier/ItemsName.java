@@ -1,11 +1,10 @@
-package gnorizon.SpringTestReportsBot.config;
+package gnorizon.SpringTestReportsBot.controller.itemSpecifier;
 
-import gnorizon.SpringTestReportsBot.controller.itemSpecifier.ItemController;
 
 /**
- * Enumeration for controller {@link ItemController}'s.
+ * Enumeration for controller {@link ItemsController}'s.
  */
-public enum Items {
+public enum ItemsName {
     ITEM_1('1',"Введите *название отчета,релиз и готовность* через запятую \n\nначиная с 1"+
             "\nн: *1 Имя-3-готов*" ),
     ITEM_2('2', "2.Введите *дату начала и окончания тестирования* \n\nначиная с 2 XXXн: *2 01.01.2001/02.02.2002*",
@@ -27,15 +26,15 @@ public enum Items {
             "XXXн: *8 17/16,16/15,15/14,14/13,13/12*"),
     ITEM_9('9', "9.Введите *Модули (общее количесвто тест-кейсов/пройденно)*  через запятую  \n\nначиная с 9 " +
             "XXXн: *9 Модуль1(11/6),Модуль2(15/1)*"),
-    ITEM_10('0', "0.Введите *Примечание* \n\nначиная с 0 "),;
+    ITEM_10('0', "0.Введите *Примечание* \n\nначиная с 0 ");
     public Character step;
     public String textForStep;
     public String textForNotFinalRep;
-    Items(Character step,String textForStep){
+    ItemsName(Character step, String textForStep){
         this.step = step;
         this.textForStep = textForStep;
     }
-    Items(Character step, String textForStep, String textForNotFinalRep){
+    ItemsName(Character step, String textForStep, String textForNotFinalRep){
         this.step = step;
         this.textForStep = textForStep;
         this.textForNotFinalRep = textForNotFinalRep;

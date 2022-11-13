@@ -8,7 +8,7 @@ import java.util.Map;
 public class Environment{
     private String standName;
     private String [] OSNames;
-    // для Промежуточного  Map<Название,List<Всего,Закрыто>>
+    // for Intermediate Map<Name,List<Total,Closed>> | для Промежуточного  Map<Название,List<Всего,Закрыто>>
     private Map<String,List<Integer>> OSInformation;
     private Map<String,List<Integer>> BrowsersInformation;
 

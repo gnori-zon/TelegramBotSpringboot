@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class InformationAboutBugs {
-    // opened and closed
+    // opened and closed | открытые и закрытые
     private int [] totalBugs;
     private int [] totalImprovements;
 

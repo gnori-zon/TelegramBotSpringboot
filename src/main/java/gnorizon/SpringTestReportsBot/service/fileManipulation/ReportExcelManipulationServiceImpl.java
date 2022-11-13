@@ -1,6 +1,6 @@
 package gnorizon.SpringTestReportsBot.service.fileManipulation;
 
-import gnorizon.SpringTestReportsBot.model.ManipulateExcelFile;
+import gnorizon.SpringTestReportsBot.model.ExcelFile;
 import gnorizon.SpringTestReportsBot.repository.Entity.Report;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
     public void create(Report report){
         String filepath = report.getName();
 
-        ManipulateExcelFile excelFile = new ManipulateExcelFile(filepath);
+        ExcelFile excelFile = new ExcelFile(filepath);
         String origin;
         if(filepath.contains(FINISH_TYPE)) {
             origin = "src/main/resources/templates/PatternFinalReport.xlsx";
@@ -34,25 +34,25 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
     @Override
     public void write(Report report) {
         String filepath = report.getName();
-        ManipulateExcelFile excelFile = new ManipulateExcelFile(filepath);
+        ExcelFile excelFile = new ExcelFile(filepath);
         if(filepath.contains(FINISH_TYPE)) {
-            // заполнение имени, релиза и готовность
+            // name filling, release and readiness | заполнение имени, релиза и готовность
             excelFile.setCell(1, 1,report.generalInformation.getName());
             excelFile.setCell(2, 1,report.generalInformation.getNumberRelease());
             excelFile.setCell(3, 1,report.generalInformation.getReadiness());
-            // заполнение сроков
+            // filling deadlines | заполнение сроков
             excelFile.setCell(3, 3,report.generalInformation.getStartTime());
             excelFile.setCell(3, 5,report.generalInformation.getEndTime());
-            //заполнение окружения
+            // filling the environment | заполнение окружения
             excelFile.setCell(5, 1,report.environment.getStandName());
             if(report.environment.getOSNames()!=null){
                 for (int i = 0; i < report.environment.getOSNames().length; i++) {
                     excelFile.setCell(6, 1 + i, report.environment.getOSNames()[i]);
                 }
             }
-            // заполнение объектов тестирования
+            // filling in test objects | заполнение объектов тестирования
             writeMap(report.aboutTestObjects.getFunctionalityInformation(),excelFile,1);
-            // заполнение багов и улучшений
+        // filling in bugs and improvements | заполнение багов и улучшений
             if(report.aboutBugs.getTotalBugs()!=null) {
                 excelFile.setCell(13, 1, report.aboutBugs.getTotalBugs()[0]);
                 excelFile.setCell(13, 2, report.aboutBugs.getTotalBugs()[1]);
@@ -63,7 +63,7 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(14, 2, report.aboutBugs.getTotalImprovements()[1]);
                 excelFile.setCell(14, 3, report.aboutBugs.getTotalImprovements()[2]);
             }
-            // по приоритету
+            // by priority | по приоритету
             if(report.aboutBugs.getHigh()!=null) {
                 excelFile.setCell(17, 1, report.aboutBugs.getHigh()[0]);
                 excelFile.setCell(17, 2, report.aboutBugs.getHigh()[1]);
@@ -79,7 +79,7 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(19, 2, report.aboutBugs.getLow()[1]);
                 excelFile.setCell(19, 3, report.aboutBugs.getLow()[2]);
             }
-            // по серьезности
+            // by severity | по серьезности
             if(report.aboutBugs.getBlockers()!=null) {
                 excelFile.setCell(22, 1, report.aboutBugs.getBlockers()[0]);
                 excelFile.setCell(22, 2, report.aboutBugs.getBlockers()[1]);
@@ -105,30 +105,30 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(26, 2, report.aboutBugs.getTrivial()[1]);
                 excelFile.setCell(26, 3, report.aboutBugs.getTrivial()[2]);
             }
-            // заполнение модулей
+            // filling modules | заполнение модулей
             writeMap(report.aboutTestCases.getInformationAboutModules(),excelFile,filepath);
-            // заполнение примечание
+            // filling note | заполнение примечание
             excelFile.setCell(37,0,report.generalInformation.getNote());
 
 
         }else{
-            // заполнение имени, релиза и готовность
+            // name filling, release and readiness | заполнение имени, релиза и готовность
             excelFile.setCell(1, 1,report.generalInformation.getName());
             excelFile.setCell(2, 1,report.generalInformation.getNumberRelease());
             excelFile.setCell(2, 2,report.generalInformation.getReadiness());
-            // заполнение сроков
+            // filling deadlines | заполнение сроков
             excelFile.setCell(4, 1, report.generalInformation.getStartTime());
             excelFile.setCell(5, 1,report.generalInformation.getEndTime());
             if(report.generalInformation.getDaysLeft()!=null) {
                 excelFile.setCell(6, 1, Integer.parseInt(report.generalInformation.getDaysLeft()));
             }
-            //заполнение окружения
+            // filling the environment | заполнение окружения
             excelFile.setCell(12, 1,report.environment.getStandName());
             writeMap(report.environment.getBrowsersInformation(),21,excelFile);
             writeMap(report.environment.getOSInformation(),15,excelFile);
-            // заполнение объектов тестирования
+            // filling in test objects | заполнение объектов тестирования
             writeMap(report.aboutTestObjects.getFunctionalityInformation(),excelFile,1);
-            // заполнение багов и улучшений
+        // filling in bugs and improvements | заполнение багов и улучшений
             if(report.aboutBugs.getTotalBugs()!=null) {
                 excelFile.setCell(29, 4, report.aboutBugs.getTotalBugs()[0]);
                 excelFile.setCell(29, 5, report.aboutBugs.getTotalBugs()[1]);
@@ -137,7 +137,7 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(30, 4, report.aboutBugs.getTotalImprovements()[0]);
                 excelFile.setCell(30, 5, report.aboutBugs.getTotalImprovements()[1]);
             }
-            // по приоритету
+            // by priority | по приоритету
             if(report.aboutBugs.getHigh()!=null) {
                 excelFile.setCell(33, 4, report.aboutBugs.getHigh()[0]);
                 excelFile.setCell(33, 5, report.aboutBugs.getHigh()[1]);
@@ -150,7 +150,7 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(35, 4, report.aboutBugs.getLow()[0]);
                 excelFile.setCell(35, 5, report.aboutBugs.getLow()[1]);
             }
-            // по серьезности
+            // by severity | по серьезности
             if(report.aboutBugs.getBlockers()!=null) {
                 excelFile.setCell(38, 4, report.aboutBugs.getBlockers()[0]);
                 excelFile.setCell(38, 5, report.aboutBugs.getBlockers()[1]);
@@ -171,9 +171,9 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
                 excelFile.setCell(42, 4, report.aboutBugs.getTrivial()[0]);
                 excelFile.setCell(42, 5, report.aboutBugs.getTrivial()[1]);
             }
-            // заполнение модулей
+            // filling modules | заполнение модулей
             writeMap(report.aboutTestCases.getInformationAboutModules(),excelFile,filepath);
-            // заполнение примечание
+            // filling note | заполнение примечание
             excelFile.setCell(37,0,report.generalInformation.getNote());
         }
     }
@@ -183,8 +183,8 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
         File file = new File(report.getName()+".xlsx");
         file.delete();
     }
-
-    private void writeMap(Map<String, List<Integer>> map,int firstRow, ManipulateExcelFile excelFile) {
+    // for  browsers and OS | для браузеров и операционных систем
+    private void writeMap(Map<String, List<Integer>> map,int firstRow, ExcelFile excelFile) {
         if(map!=null) {
             Set<String> names = map.keySet();
             int i = 0;
@@ -200,7 +200,8 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
             }
         }
     }
-    private void writeMap(Map<String,Integer> map, ManipulateExcelFile excelFile,int firstColumn){
+    // for func | для функциональностей
+    private void writeMap(Map<String,Integer> map, ExcelFile excelFile, int firstColumn){
         if(map!=null) {
             Set<String> names = map.keySet();
             int i = 0;
@@ -213,7 +214,8 @@ public class ReportExcelManipulationServiceImpl implements ReportFileManipulatio
             }
         }
     }
-    private void writeMap(Map<String, List<Integer>> map,ManipulateExcelFile excelFile,String filepath) {
+    // for modules | для модулей
+    private void writeMap(Map<String, List<Integer>> map, ExcelFile excelFile, String filepath) {
         if (map!=null) {
             Set<String> names = map.keySet();
             int i = 0;

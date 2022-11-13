@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 @Data
 public class InformationAboutTestCases {
-    // map<имя модуля, list<всего, закрыто>>
+    // map<module name, list<total, closed>> | map<имя модуля, list<всего, закрыто>>
     Map<String, List<Integer>> informationAboutModules;
 
 }

@@ -9,7 +9,7 @@ public class GeneralInformation {
     private String readiness;
     private String startTime;
     private String endTime;
-    //только в Промедуточном
+    //only in intermediate |только в Промежуточном
     private String daysLeft;
     private String note;
 }

@@ -9,11 +9,11 @@ import java.io.*;
 /**
  * Excel file template model and methods for working with it
  */
-public class ManipulateExcelFile {
+public class ExcelFile {
     private File filePath;
 
     // constructor with file creation | констркутор с созданием файла
-    public ManipulateExcelFile(String filePath) {
+    public ExcelFile(String filePath) {
         this.filePath = new File(filePath+".xlsx");
     }
 

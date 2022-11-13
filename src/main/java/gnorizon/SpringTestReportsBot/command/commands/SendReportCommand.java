@@ -8,14 +8,12 @@ import gnorizon.SpringTestReportsBot.service.sendBot.SendBotDocumentService;
 import gnorizon.SpringTestReportsBot.service.sendBot.SendBotMessageService;
 import gnorizon.SpringTestReportsBot.service.fileManipulation.ReportFileManipulationService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.objects.Update;
 /**
  * Send me report {@link Command}.
  */
 @Slf4j
 public class SendReportCommand implements Command {
-    @Autowired
     private final ReportFileManipulationService fileManipulation;
     private final SendBotMessageService sendBotMessageService;
     private final SendBotDocumentService sendBotDocumentService;
