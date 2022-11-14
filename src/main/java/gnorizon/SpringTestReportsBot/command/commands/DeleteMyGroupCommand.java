@@ -35,7 +35,6 @@ public class DeleteMyGroupCommand implements Command {
 
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-        List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
         Map<String,String> myGroups= modifyDataBaseService.getAllGroup(chatId);
         if (!myGroups.isEmpty()){
@@ -44,6 +43,7 @@ public class DeleteMyGroupCommand implements Command {
             for(String name : namesGroup) {
 
                 if (!"Участник".equals(myGroups.get(name))) {
+                    List<InlineKeyboardButton> rowInline = new ArrayList<>();
                     var button = new InlineKeyboardButton();
                     button.setText(name);
                     button.setCallbackData(forCallback + name);

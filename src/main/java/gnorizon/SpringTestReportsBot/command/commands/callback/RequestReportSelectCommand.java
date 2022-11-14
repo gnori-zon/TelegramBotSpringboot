@@ -33,7 +33,7 @@ public class RequestReportSelectCommand implements Command {
 
         EditMessageText message = new EditMessageText();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Вы запросили отчеты : "+nameGroup);
+        message.setText("Вы запросили отчеты: "+nameGroup);
         message.setMessageId((int) messageId);
         sendBotMessageService.executeEditMessage(message);
     }
