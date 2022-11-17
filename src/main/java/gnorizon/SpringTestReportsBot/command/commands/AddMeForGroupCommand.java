@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * Add me for group (work with DB) {@link Command}.
  */
 public class AddMeForGroupCommand implements Command {
-    private final String NAME_MISSING = "Укажите название группы";
+    public static final String NAME_MISSING = "Укажите название группы";
     private final SendBotMessageService sendBotMessageService;
     private final ModifyDataBaseService modifyDataBaseService;
 

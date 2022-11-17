@@ -81,7 +81,6 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
     @Override
     public Map<Long,String> requestReports(String nameGroup,Long chatId){
         Map<Long,String> dataAboutUsers= new HashMap<>();
-        Long owner = groupRepository.findById(nameGroup).get().getOwner();
         var users = userRepository.findAllBy(nameGroup);
         users.forEach(user -> dataAboutUsers.put(user.getChatId(),"Группа: "+nameGroup+"-Подготовьте отчет!"));
         return dataAboutUsers;

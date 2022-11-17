@@ -17,8 +17,8 @@ import static gnorizon.SpringTestReportsBot.controller.itemSpecifier.ItemsName.I
  */
 @Slf4j
 public class AddReportToRepositoryCommand implements Command {
-    private static final String INTERMEDIATE = "INT_REPORT_BUTTON";
-    private static final String FINAL = "FIN_REPORT_BUTTON";
+    public static final String INTERMEDIATE = "INT_REPORT_BUTTON";
+    public static final String FINAL = "FIN_REPORT_BUTTON";
     private final ModifyRepositoryReportsService modifyRepositoryReportsService;
     private final SendBotMessageService sendBotMessageService;
     private final ClientAttributeModifyService clientAttributeModifyService;

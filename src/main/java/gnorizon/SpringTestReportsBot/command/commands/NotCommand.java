@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
  * Not command  {@link Command}.
  */
 public class NotCommand implements Command {
+    public static String TEXT_TO_SEND_NC = "Вы забыли про '/' ";
     public final SendBotMessageService sendBotMessageService;
 
 
@@ -17,6 +18,6 @@ public class NotCommand implements Command {
     @Override
     public void execute(Update update) {
             long chatId = update.getMessage().getChatId();
-            sendBotMessageService.sendMessages(chatId, "Вы забыли про '/' ");
+            sendBotMessageService.sendMessages(chatId,TEXT_TO_SEND_NC);
     }
 }

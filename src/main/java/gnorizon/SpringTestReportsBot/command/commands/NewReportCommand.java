@@ -19,8 +19,8 @@ public class NewReportCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
     private final ClientAttributeModifyService clientAttributeModifyService;
 
-    private final String INTERMEDIATE = "INT_REPORT_BUTTON";
-    private final String FINAL = "FIN_REPORT_BUTTON";
+    public final static String INTERMEDIATE = "INT_REPORT_BUTTON";
+    public final static String FINAL = "FIN_REPORT_BUTTON";
 
     public NewReportCommand(SendBotMessageService sendBotMessageService,
                             ClientAttributeModifyService clientAttributeModifyService) {

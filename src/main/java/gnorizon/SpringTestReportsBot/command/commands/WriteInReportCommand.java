@@ -12,6 +12,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import static gnorizon.SpringTestReportsBot.TelegramBot.FINISH_TYPE;
 import static gnorizon.SpringTestReportsBot.TelegramBot.INTER_TYPE;
+import static gnorizon.SpringTestReportsBot.controller.itemSpecifier.items.Item10.regex;
+
 /**
  * Write data in report {@link Command}.
  */
@@ -67,8 +69,8 @@ public class WriteInReportCommand implements Command {
                     sendBotMessageService.sendMessages(chatId, respArr[0]);
                     sendBotMessageService.sendMessages(chatId, respArr[1]);
                     //последнее сообщение
-                } else if (resp.contains("XSX")) {
-                    respArr = resp.split("XSX");
+                } else if (resp.contains(regex)) {
+                    respArr = resp.split(regex);
                     sendBotDocumentService.sendPhoto(chatId, "", respArr[0]);
                     sendBotMessageService.sendMessagesAndButton(chatId, respArr[1]);
 

@@ -1,6 +1,8 @@
 package gnorizon.SpringTestReportsBot.repository.Entity;
 
 import javax.persistence.*;
+import java.util.Objects;
+
 @Entity(name = "users")
 public class User {
     @Id
@@ -32,5 +34,18 @@ public class User {
 
     public void setNameGroup(String nameGroup) {
         this.nameGroup = nameGroup;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return getChatId().equals(user.getChatId()) && getNameGroup().equals(user.getNameGroup());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getChatId(), getNameGroup());
     }
 }
