@@ -22,11 +22,11 @@ public class DeleteMeGroupSelectCommand implements Command {
         long messageId = update.getCallbackQuery().getMessage().getMessageId();
         long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-        modifyDataBaseService.deleteFromGroup(nameGroup, chatId);
+        String response = modifyDataBaseService.deleteFromGroup(nameGroup, chatId);
 
         EditMessageText message = new EditMessageText();
         message.setChatId(String.valueOf(chatId));
-        message.setText("Вы покинули группу: "+nameGroup);
+        message.setText(response+nameGroup);
         message.setMessageId((int) messageId);
         sendBotMessageService.executeEditMessage(message);
     }

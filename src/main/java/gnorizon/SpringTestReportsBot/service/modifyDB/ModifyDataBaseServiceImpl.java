@@ -66,9 +66,8 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
         for(User user : users){
             userRepository.deleteById(user.getId());
             log.info("user: " + user+" remove from group: " + nameGroup);
-            return "Вы вышли из группы!";
         }
-            return "Вы не состоите в этой группе";
+        return "Вы покинули группу: ";
     }
     @Override
     public String dropGroup(String  nameGroup,Long chatId){
@@ -76,7 +75,7 @@ public class ModifyDataBaseServiceImpl implements ModifyDataBaseService {
         users.forEach(user -> userRepository.deleteById(user.getId()));
         groupRepository.deleteById(nameGroup);
         log.info("user: " + chatId +" drop self group: " + nameGroup);
-        return "Группа распущена и удалена!";
+        return "Вы распустили группу: ";
     }
     @Override
     public Map<Long,String> requestReports(String nameGroup,Long chatId){
