@@ -39,6 +39,7 @@ public class DeleteMeGroupSelectCommandTest {
         message.setChatId(String.valueOf(chatId));
         message.setText("Вы покинули группу: "+nameGroup);
         message.setMessageId(messageId);
+        Mockito.when(modifyDataBaseService.deleteFromGroup(nameGroup,chatId)).thenReturn("Вы покинули группу: ");
         //when
         command.execute(update);
         //then

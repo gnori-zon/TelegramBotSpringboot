@@ -141,7 +141,7 @@ public class ModifyDataBaseServiceTest {
         String result = modifyDataBaseService.deleteFromGroup(nameGroup,chatId);
         //then
         Mockito.verify(userRepository).deleteById(user.getId());
-        Assertions.assertEquals("Вы вышли из группы!",result);
+        Assertions.assertEquals("Вы покинули группу: ",result);
     }
     @Test
     public void deleteFromGroupArentInGroup(){
@@ -150,7 +150,7 @@ public class ModifyDataBaseServiceTest {
         //when
         String result = modifyDataBaseService.deleteFromGroup(nameGroup,chatId);
         //then
-        Assertions.assertEquals("Вы не состоите в этой группе",result);
+        Assertions.assertEquals("Вы покинули группу: ",result);
     }
 
 
@@ -165,7 +165,7 @@ public class ModifyDataBaseServiceTest {
         //then
         Mockito.verify(userRepository).deleteById(user.getId());
         Mockito.verify(groupRepository).deleteById(nameGroup);
-        Assertions.assertEquals("Группа распущена и удалена!",result);
+        Assertions.assertEquals("Вы распустили группу: ",result);
     }
 
     @Test
